@@ -1,0 +1,192 @@
+---
+// src/components/Regalo.astro
+// La sugerencia de regalo, con la temática del bosque: el título, el
+// icono del sobre en dorado y el aviso sobre un papel velado con hilo
+// dorado. Una mariposa en el aire, a un costado.
+//
+// Sigue el mismo lenguaje que Código de vestimenta: sin tarjeta grande,
+// el texto se apoya sobre el bosque del layout.
+//
+// Las medidas van en cqw —% del ancho de la columna— y no en
+// breakpoints: se ve igual en el celular, en la tablet y en la
+// computadora, como el resto de la invitación.
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const titulo = "Lluvia de sobres";
+const aviso =
+    "Tu presencia es mi mejor regalo. Si deseas obsequiarme algo, habrá un buzón para sobres el día de la fiesta.";
+// ──────────────────────────────────────────────────────────────
+---
+
+<section id="regalo" class="seccion">
+    <div id="rg-bloque" class="bloque">
+        <p class="titulo font-charm">{titulo}</p>
+
+        <!-- El icono se pinta con máscara (la clase .icono de global.css):
+             así toma el dorado exacto de la invitación -->
+        <span
+            class="icono icono-dorado"
+            style="--ic:url('/iconos/lluvia-sobre.png')"
+            aria-hidden="true"></span>
+
+        <div class="aviso">
+            <p class="texto font-charm">{aviso}</p>
+        </div>
+    </div>
+
+    <!-- Una mariposa en el aire, a un costado -->
+    <img
+        class="mariposa"
+        src="/imagenes/mariposa.png"
+        alt=""
+        aria-hidden="true"
+        width="170"
+        height="143"
+    />
+</section>
+
+<style>
+    /*
+       container-type deja medir todo contra el ancho de la columna y no
+       de la pantalla: 1cqw es el 1% de ese ancho.
+
+       Sin fondo propio: se ve el bosque que pone el layout.
+    */
+    .seccion {
+        position: relative;
+        width: 100%;
+        padding: 12cqw 0 14cqw;
+        overflow: hidden;
+        container-type: inline-size;
+        background-color: transparent;
+    }
+
+    .bloque {
+        position: relative;
+        z-index: 1;
+        width: 78%;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .titulo {
+        color: #c0993f;
+        font-size: 8.4cqw;
+        font-weight: 700;
+        line-height: 1.15;
+    }
+
+    .icono {
+        width: 16cqw;
+        height: 16cqw;
+        margin: 5cqw auto;
+    }
+    .icono-dorado {
+        background-color: #c0993f;
+    }
+
+    /*
+       El aviso va en el mismo papel velado con hilo dorado que el de
+       vestimenta. El velo va como degradado y no como color: el modo
+       oscuro forzado oscurece colores pero respeta las imágenes.
+    */
+    .aviso {
+        margin: 0 auto;
+        padding: 5cqw 5cqw 5.5cqw;
+        border: 1px solid #d8bd85;
+        border-radius: 4cqw;
+        background-image: linear-gradient(
+            rgba(255, 255, 255, 0.82),
+            rgba(255, 255, 255, 0.72)
+        );
+    }
+
+    .texto {
+        color: #4b5a43;
+        font-size: 5.2cqw;
+        line-height: 1.45;
+    }
+
+    /* ── La mariposa ────────────────────────────────────────
+       En el aire, a un costado: no tapa nada. */
+    .mariposa {
+        position: absolute;
+        right: 4%;
+        top: 14%;
+        width: 11%;
+        height: auto;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        .mariposa {
+            animation: rg-volar 7s ease-in-out infinite;
+        }
+    }
+
+    @keyframes rg-volar {
+        0%,
+        100% {
+            transform: translate(0, 0) rotate(0deg);
+        }
+        50% {
+            transform: translate(-1.4cqw, -2cqw) rotate(7deg);
+        }
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const seccion = document.getElementById("regalo");
+        const bloque = document.getElementById("rg-bloque");
+        if (!seccion || !bloque) return;
+
+        // Sin animación si el visitante pidió menos movimiento: la
+        // sección ya está armada y visible en el HTML.
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+            return;
+
+        const renglones = Array.from(bloque.children);
+        const mariposa = seccion.querySelector(".mariposa");
+
+        // La misma entrada que Código de vestimenta
+        gsap.set(renglones, {
+            opacity: 0,
+            x: (i) => (i === 0 ? "0%" : i % 2 === 1 ? "-14%" : "14%"),
+            y: (i) => (i === 0 ? "-45%" : "0%"),
+            scale: 0.92,
+        });
+        gsap.set(mariposa, { opacity: 0 });
+
+        const linea = gsap.timeline({
+            paused: true,
+            defaults: { ease: "power2.out" },
+        });
+
+        linea
+            .to(renglones, {
+                opacity: 1,
+                x: "0%",
+                y: "0%",
+                scale: 1,
+                duration: 1.2,
+                stagger: 0.09,
+                ease: "power3.out",
+            })
+            .to(mariposa, { opacity: 1, duration: 1.1 }, 0.6);
+
+        ScrollTrigger.create({
+            trigger: seccion,
+            start: "top 80%",
+            onEnter: () => linea.restart(),
+            onLeaveBack: () => linea.pause(0),
+        });
+    });
+</script>

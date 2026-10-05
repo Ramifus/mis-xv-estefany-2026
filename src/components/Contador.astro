@@ -1,0 +1,412 @@
+---
+// src/components/Contador.astro
+// "Falta para mis XV" entre dos hilos dorados, y en el medio la cuenta
+// regresiva en cuatro arcos verdes con el número en blanco. A los
+// costados, dos mariposas.
+//
+// Va con la letra y los colores del resto de la invitación: Great Vibes
+// dorada para el título y Charm para los números y los rótulos.
+//
+// ── De dónde salen las medidas ────────────────────────────────
+// Se midió el diseño y se cruzó con los anchos reales de las fuentes de
+// /fonts. Salen dos tipografías:
+//
+//   título     Verandah Reverie — la misma del "Acompananos"
+//   rótulos    Tangerine Regular — los cuatro dan 5.98 · 5.97 · 6.06 ·
+//              5.96, o sea la misma letra
+//   números    Adelia — el diseño los tiene en Tangerine, pero esa letra
+//              trae cifras antiguas y no sirve para un contador. El
+//              porqué está anotado en .numero.
+//
+// Medidas, en % del ancho de la columna:
+//   arco        13.2% de ancho, con 5% de aire entre uno y otro
+//   filigranas  45.8% la de arriba, 44.8% la de abajo
+//
+// Las filigranas van derechas, sin voltear: comparadas con el archivo,
+// en este diseño miran para el mismo lado que el original (al revés de
+// las de NombresPadres, que sí van dadas vuelta).
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const titulo = "Falta para mis XV";
+// Los XV: viernes 13 de noviembre de 2026, a las 19:30
+const fechaBoda = "2026-11-13T19:30:00";
+
+const casillas = [
+    { id: "dias", rotulo: "Días" },
+    { id: "horas", rotulo: "Horas" },
+    { id: "minutos", rotulo: "Minutos" },
+    { id: "segundos", rotulo: "Segundos" },
+];
+// ──────────────────────────────────────────────────────────────
+---
+
+<section id="contador-boda" class="seccion">
+    <p class="titulo font-charm">{titulo}</p>
+
+    <svg class="sep sep-arriba" viewBox="0 0 400 30" aria-hidden="true" focusable="false">
+        <g stroke="#c0993f" stroke-width="1.5" fill="none" stroke-linecap="round">
+            <path d="M26,15 C56,3 86,27 116,15 C140,5 160,10 172,15"></path>
+            <path d="M374,15 C344,3 314,27 284,15 C260,5 240,10 228,15"></path>
+        </g>
+        <g fill="#c0993f">
+            <path d="M200,2 C201.5,10 205,13.5 213,15 C205,16.5 201.5,20 200,28 C198.5,20 195,16.5 187,15 C195,13.5 198.5,10 200,2 Z"></path>
+            <circle cx="178" cy="15" r="2.2"></circle>
+            <circle cx="222" cy="15" r="2.2"></circle>
+            <circle cx="22" cy="15" r="2"></circle>
+            <circle cx="378" cy="15" r="2"></circle>
+        </g>
+    </svg>
+
+    <div id="contador" class="casillas" data-fecha={fechaBoda}>
+        {
+            casillas.map((casilla) => (
+                <div class="casilla">
+                    <div class="arco">
+                        <span
+                            data-campo={casilla.id}
+                            class="numero font-charm"
+                        >
+                            00
+                        </span>
+                    </div>
+                    <p class="rotulo font-charm">{casilla.rotulo}</p>
+                </div>
+            ))
+        }
+    </div>
+
+    <svg class="sep sep-abajo" viewBox="0 0 400 30" aria-hidden="true" focusable="false">
+        <g stroke="#c0993f" stroke-width="1.5" fill="none" stroke-linecap="round">
+            <path d="M26,15 C56,3 86,27 116,15 C140,5 160,10 172,15"></path>
+            <path d="M374,15 C344,3 314,27 284,15 C260,5 240,10 228,15"></path>
+        </g>
+        <g fill="#c0993f">
+            <path d="M200,2 C201.5,10 205,13.5 213,15 C205,16.5 201.5,20 200,28 C198.5,20 195,16.5 187,15 C195,13.5 198.5,10 200,2 Z"></path>
+            <circle cx="178" cy="15" r="2.2"></circle>
+            <circle cx="222" cy="15" r="2.2"></circle>
+            <circle cx="22" cy="15" r="2"></circle>
+            <circle cx="378" cy="15" r="2"></circle>
+        </g>
+    </svg>
+
+    <!-- Las dos mariposas, una a cada costado de la cuenta -->
+    <img
+        class="mariposa mariposa-izq"
+        src="/imagenes/mariposa.png"
+        alt=""
+        aria-hidden="true"
+        width="170"
+        height="143"
+    />
+    <img
+        class="mariposa mariposa-der"
+        src="/imagenes/mariposa.png"
+        alt=""
+        aria-hidden="true"
+        width="170"
+        height="143"
+    />
+</section>
+
+<style>
+    /*
+       container-type deja medir todo contra el ancho de la columna y no
+       contra la pantalla: 1cqw es el 1% de ese ancho, y el armado guarda
+       la misma proporción en cualquier celular.
+    */
+    .seccion {
+        container-type: inline-size;
+        position: relative;
+        width: 100%;
+        padding: 8% 0;
+        text-align: center;
+    }
+
+    .titulo {
+        margin: 0;
+        color: #c0993f;
+        font-size: 7cqw;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    /* Los hilos dorados, arriba y abajo de la cuenta */
+    .sep {
+        display: block;
+        width: 62%;
+        height: auto;
+        margin: 0 auto;
+    }
+
+    .sep-arriba {
+        margin-top: 6cqw;
+    }
+
+    .sep-abajo {
+        margin-top: 6cqw;
+    }
+
+    /* ── Las mariposas ──────────────────────────────────────
+       Van sueltas a los costados de la cuenta; la de la izquierda mira
+       hacia adentro. */
+    .mariposa {
+        position: absolute;
+        width: 10%;
+        height: auto;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    /* Miran hacia el centro: la de la izquierda va espejada */
+    .mariposa-izq {
+        left: 3%;
+        top: 18%;
+        transform: scaleX(-1);
+    }
+
+    .mariposa-der {
+        right: 3%;
+        top: 84%;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        .mariposa-izq {
+            animation: co-volar-izq 7s ease-in-out infinite;
+        }
+
+        .mariposa-der {
+            animation: co-volar-der 8.5s ease-in-out infinite;
+        }
+    }
+
+    @keyframes co-volar-izq {
+        0%,
+        100% {
+            transform: scaleX(-1) translate(0, 0) rotate(0deg);
+        }
+        50% {
+            transform: scaleX(-1) translate(1.4cqw, -2cqw) rotate(-7deg);
+        }
+    }
+
+    @keyframes co-volar-der {
+        0%,
+        100% {
+            transform: translate(0, 0) rotate(0deg);
+        }
+        50% {
+            transform: translate(-1.2cqw, -1.8cqw) rotate(6deg);
+        }
+    }
+
+    /* ── Los cuatro arcos ───────────────────────────────────── */
+    .casillas {
+        display: flex;
+        justify-content: center;
+        gap: 5%;
+        margin-top: 7cqw;
+    }
+
+    /*
+       El min-width 0 es imprescindible. Un ítem flex trae min-width auto,
+       o sea que no se deja achicar por debajo de su contenido: "Minutos"
+       es más ancho que su arco, así que ensanchaba su casilla, el arco
+       crecía con ella —va por proporción, no por alto fijo— y el rótulo
+       terminaba más abajo y más grande que los otros tres.
+    */
+    .casilla {
+        flex: 0 0 13.2%;
+        min-width: 0;
+    }
+
+    /*
+       El arco: 55 de ancho por 70 de alto en el diseño, con la cúpula
+       redonda arriba y las puntas de abajo apenas matadas. El radio va
+       en dos ejes (50% de ancho por 30% de alto) porque la cúpula no es
+       media circunferencia: es más chata.
+    */
+    .arco {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        aspect-ratio: 55 / 70;
+        /*
+           El número no va en el centro del arco sino en el centro de la
+           parte recta: la cúpula se come el aire de arriba y, centrado a
+           secas, el número se ve subido.
+
+           El valor está calculado contra la Adelia, cuyos dígitos no
+           quedan en el medio de su propia caja: el dibujo cae 0,11 em
+           por encima del centro. Si se cambia la fuente del número, hay
+           que rehacer este número.
+        */
+        padding-top: 2.6cqw;
+        border-radius: 50% 50% 3px 3px / 30% 30% 3px 3px;
+        background-image: linear-gradient(#5d7550, #4b5a43);
+    }
+
+    /*
+       Los números van en Charm, la letra del resto de la invitación. Sus
+       diez cifras miden todas lo mismo y apoyan en la misma línea, así
+       que el número no cambia de porte al pasar los segundos —que era el
+       problema de las cifras antiguas de la Tangerine.
+    */
+    .numero {
+        color: #ffffff;
+        font-size: 6.4cqw;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .rotulo {
+        margin: 2.4cqw 0 0;
+        color: #4b5a43;
+        font-size: 4.6cqw;
+        font-weight: 700;
+        font-variant-caps: small-caps;
+        letter-spacing: 0.06em;
+        line-height: 1;
+        /*
+           "Minutos" es más ancho que su arco y tiene que seguir en un
+           solo renglón: se sale para los costados, hacia el aire que hay
+           entre arco y arco, como en el diseño.
+        */
+        white-space: nowrap;
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const caja = document.getElementById("contador");
+        const seccion = document.getElementById("contador-boda");
+        if (!caja || !seccion) return;
+
+        // ── La cuenta ───────────────────────────────────────────
+        const destino = new Date(caja.dataset.fecha ?? "").getTime();
+        const campo = (n: string) =>
+            caja.querySelector<HTMLElement>(`[data-campo="${n}"]`);
+        const dias = campo("dias");
+        const horas = campo("horas");
+        const minutos = campo("minutos");
+        const segundos = campo("segundos");
+
+        const dosDigitos = (n: number) => n.toString().padStart(2, "0");
+
+        const refrescar = () => {
+            const falta = destino - Date.now();
+
+            if (!isFinite(destino)) return;
+
+            // Ya pasó la fecha: todo en cero, y no hace falta seguir
+            if (falta <= 0) {
+                if (dias) dias.textContent = "00";
+                if (horas) horas.textContent = "00";
+                if (minutos) minutos.textContent = "00";
+                if (segundos) segundos.textContent = "00";
+                clearInterval(reloj);
+                return;
+            }
+
+            const s = Math.floor(falta / 1000);
+            if (dias) dias.textContent = dosDigitos(Math.floor(s / 86400));
+            if (horas) horas.textContent = dosDigitos(Math.floor(s / 3600) % 24);
+            if (minutos)
+                minutos.textContent = dosDigitos(Math.floor(s / 60) % 60);
+            if (segundos) segundos.textContent = dosDigitos(s % 60);
+        };
+
+        refrescar();
+        const reloj = setInterval(refrescar, 1000);
+
+        // ── Entrada ─────────────────────────────────────────────
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+            return;
+
+        const disparador = {
+            trigger: seccion,
+            start: "top 82%",
+            toggleActions: "play none none reset",
+        };
+
+        gsap.fromTo(
+            seccion.querySelector(".titulo"),
+            { opacity: 0, y: "-60%", scale: 0.92 },
+            {
+                opacity: 1,
+                y: "0%",
+                scale: 1,
+                duration: 1.2,
+                ease: "power3.out",
+                scrollTrigger: disparador,
+            },
+        );
+
+        // Los separadores se abren desde el centro, y cada uno llega de un
+        // lado: el de arriba desde la izquierda y el de abajo desde la derecha
+        gsap.fromTo(
+            seccion.querySelectorAll(".sep"),
+            {
+                opacity: 0,
+                scaleX: 0.6,
+                x: (i: number) => (i === 0 ? "-18%" : "18%"),
+            },
+            {
+                opacity: 1,
+                scaleX: 1,
+                x: "0%",
+                duration: 1.2,
+                delay: 0.15,
+                stagger: 0.12,
+                ease: "power3.out",
+                scrollTrigger: disparador,
+            },
+        );
+
+        /*
+           Los cuatro arcos entran al mismo tiempo pero cada uno por su
+           lado: los de los extremos desde afuera y los del medio desde
+           abajo y desde arriba. Se nota el armado sin que la cuenta tarde
+           en quedar lista.
+        */
+        gsap.fromTo(
+            seccion.querySelectorAll(".casilla"),
+            {
+                opacity: 0,
+                scale: 0.8,
+                x: (i: number) => ["-45%", "0%", "0%", "45%"][i],
+                y: (i: number) => ["0%", "45%", "-45%", "0%"][i],
+            },
+            {
+                opacity: 1,
+                scale: 1,
+                x: "0%",
+                y: "0%",
+                duration: 1.2,
+                delay: 0.3,
+                stagger: 0.07,
+                ease: "back.out(1.4)",
+                scrollTrigger: disparador,
+            },
+        );
+
+        // Las mariposas aparecen al final, sin moverse: su vuelo es de CSS
+        gsap.fromTo(
+            seccion.querySelectorAll(".mariposa"),
+            { opacity: 0 },
+            {
+                opacity: 1,
+                duration: 1.1,
+                delay: 0.9,
+                stagger: 0.25,
+                scrollTrigger: disparador,
+            },
+        );
+    });
+</script>

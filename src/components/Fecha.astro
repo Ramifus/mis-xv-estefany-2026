@@ -1,0 +1,335 @@
+---
+// src/components/Fecha.astro
+// La fecha del evento: la frase de invitación entre dos mariposas y
+// debajo el día, el número y el mes, con el año.
+//
+// Las medidas van en cqw —% del ancho de la columna— y no en breakpoints:
+// la invitación se ve igual en el celular, en la tablet y en la
+// computadora, que es como están hechas las demás secciones.
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const frase = "Acompáñanos este día tan especial";
+const dia = "Viernes";
+const numero = "13";
+const mes = "Noviembre";
+const anio = "2026";
+// ──────────────────────────────────────────────────────────────
+---
+
+<!-- ── El adorno de arriba: el ramo de flores, centrado ────── -->
+<img
+    class="centro"
+    src="/imagenes/centro.png"
+    alt=""
+    aria-hidden="true"
+    width="380"
+    height="197"
+/>
+
+<section id="fecha" class="seccion">
+    <!-- El corazón que va en el medio de los separadores -->
+    <svg class="taller" aria-hidden="true" focusable="false">
+        <defs>
+            <path
+                id="fe-corazon"
+                d="M12,5 C9,0 2,1 2,8 C2,14 8,17 12,22 C16,17 22,14 22,8 C22,1 15,0 12,5 Z"
+            ></path>
+        </defs>
+    </svg>
+
+    <div id="fe-bloque" class="bloque">
+        <!-- separador de arriba -->
+        <svg class="sep" viewBox="0 0 400 30" aria-hidden="true" focusable="false">
+            <g stroke="#c0993f" stroke-width="1.5" fill="none" stroke-linecap="round">
+                <path d="M30,15 L178,15"></path>
+                <path d="M222,15 L370,15"></path>
+            </g>
+            <use href="#fe-corazon" x="188" y="4" fill="#c0993f"></use>
+        </svg>
+
+        <!-- La frase, con una mariposa de cada lado -->
+        <div class="fila-frase">
+            <img
+                class="hada hada-izq"
+                src="/imagenes/ada.png"
+                alt=""
+                aria-hidden="true"
+                width="1390"
+                height="1132"
+            />
+            <p class="frase font-charm">{frase}</p>
+            <img
+                class="hada hada-der"
+                src="/imagenes/ada.png"
+                alt=""
+                aria-hidden="true"
+                width="1390"
+                height="1132"
+            />
+        </div>
+
+        <!-- El día, el número y el mes -->
+        <div class="fila-fecha">
+            <div class="lado">
+                <span class="raya"></span>
+                <p class="rotulo font-charm">{dia}</p>
+                <span class="raya"></span>
+            </div>
+
+            <p class="numero font-charm">{numero}</p>
+
+            <div class="lado">
+                <span class="raya"></span>
+                <p class="rotulo font-charm">{mes}</p>
+                <span class="raya"></span>
+            </div>
+        </div>
+
+        <p class="anio font-charm">{anio}</p>
+
+        <!-- separador de abajo -->
+        <svg class="sep sep-abajo" viewBox="0 0 400 30" aria-hidden="true" focusable="false">
+            <g stroke="#c0993f" stroke-width="1.5" fill="none" stroke-linecap="round">
+                <path d="M30,15 L178,15"></path>
+                <path d="M222,15 L370,15"></path>
+            </g>
+            <use href="#fe-corazon" x="188" y="4" fill="#c0993f"></use>
+        </svg>
+    </div>
+</section>
+
+<style>
+    /*
+       container-type deja medir todo contra el ancho de la columna y no
+       del viewport: la sección guarda la misma proporción en cualquier
+       pantalla, sin tamaños distintos para tablet ni para computadora.
+
+       Sin fondo propio: se ve el bosque que pone el layout.
+    */
+    .seccion {
+        position: relative;
+        width: 100%;
+        padding: 12cqw 0;
+        container-type: inline-size;
+        background-color: transparent;
+    }
+
+    /* La guirnalda va centrada y chica, como un adorno, no cruzando
+       de punta a punta */
+    /* El ramo va centrado, como adorno */
+    .centro {
+        position: relative;
+        z-index: 2;
+        display: block;
+        width: 46%;
+        height: auto;
+        margin: 0 auto;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    /* El taller no se ve: solo guarda el corazón que se repite */
+    .taller {
+        position: absolute;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+    }
+
+    .bloque {
+        width: 82%;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    /* ── Los separadores ────────────────────────────────────── */
+    .sep {
+        display: block;
+        width: 62%;
+        height: auto;
+        margin: 0 auto 5cqw;
+    }
+
+    .sep-abajo {
+        margin: 5cqw auto 0;
+    }
+
+    /* ── La frase, entre las dos mariposas ──────────────────── */
+    .fila-frase {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 3cqw;
+    }
+
+    .frase {
+        color: #4a6551;
+        font-size: 6.4cqw;
+        line-height: 1.3;
+    }
+
+    /* El PNG del hada trae aire transparente alrededor, por eso la
+       medida es más grande que el hada que se ve */
+    .hada {
+        flex: none;
+        width: 24%;
+        margin: 0 -4%;
+        height: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    /* El hada del dibujo mira a la derecha: la de la izquierda va tal
+       cual y la de la derecha va espejada, así las dos miran al texto */
+    .hada-der {
+        transform: scaleX(-1);
+    }
+
+    /* ── El día, el número y el mes ─────────────────────────
+       Las dos columnas de los costados miden lo mismo, así el número
+       queda justo en el medio aunque "Noviembre" sea más largo que
+       "Sábado". */
+    .fila-fecha {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 3.5cqw;
+        margin-top: 7cqw;
+    }
+
+    .lado {
+        flex: 0 0 26%;
+    }
+
+    /* Las rayitas van como imagen y no como color: el modo oscuro
+       forzado oscurece colores pero respeta las imágenes */
+    .raya {
+        display: block;
+        width: 100%;
+        height: 1px;
+        background-image: linear-gradient(#c0993f, #c0993f);
+    }
+
+    .rotulo {
+        margin: 1.6cqw 0;
+        color: #4b5a43;
+        font-size: 6cqw;
+        font-weight: 700;
+        font-variant-caps: small-caps;
+        letter-spacing: 0.08em;
+        line-height: 1;
+    }
+
+    .numero {
+        color: #c0993f;
+        font-size: 24cqw;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .anio {
+        margin-top: 2cqw;
+        color: #c0993f;
+        font-size: 9.5cqw;
+        line-height: 1;
+    }
+
+    /* Las mariposas flotan despacio; si el visitante pidió menos
+       movimiento, se quedan quietas */
+    @media (prefers-reduced-motion: no-preference) {
+        .hada-izq {
+            animation: fe-volar-izq 6.5s ease-in-out infinite;
+        }
+
+        .hada-der {
+            animation: fe-volar-der 8s ease-in-out infinite;
+        }
+    }
+
+    @keyframes fe-volar-izq {
+        0%,
+        100% {
+            transform: translate(0, 0) rotate(0deg);
+        }
+        50% {
+            transform: translate(-1cqw, -1.8cqw) rotate(-6deg);
+        }
+    }
+
+    @keyframes fe-volar-der {
+        0%,
+        100% {
+            transform: scaleX(-1) translate(0, 0) rotate(0deg);
+        }
+        50% {
+            transform: scaleX(-1) translate(1cqw, -1.6cqw) rotate(6deg);
+        }
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const seccion = document.getElementById("fecha");
+        const bloque = document.getElementById("fe-bloque");
+        if (!seccion || !bloque) return;
+
+        // Sin animación si el visitante pidió menos movimiento: la
+        // sección ya está armada y visible en el HTML.
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+            return;
+
+        const renglones = Array.from(bloque.children);
+
+        /*
+           A las hadas solo se les toca la opacidad: su vuelo es una
+           animación de CSS que usa transform, y si GSAP les tocara la
+           posición, las dos se pisarían.
+        */
+        const hadas = bloque.querySelectorAll(".hada");
+
+        /*
+           La entrada: todos los renglones arrancan al mismo tiempo pero
+           cada uno viene de un lado distinto —el primero baja desde
+           arriba y los demás entran alternando izquierda y derecha—, y
+           además crecen un poquito. Así el armado se nota, que es la
+           gracia, sin que la sección tarde en quedar lista.
+        */
+        gsap.set(renglones, {
+            opacity: 0,
+            x: (i) => (i === 0 ? "0%" : i % 2 === 1 ? "-14%" : "14%"),
+            y: (i) => (i === 0 ? "-45%" : "0%"),
+            scale: 0.92,
+        });
+        gsap.set(hadas, { opacity: 0 });
+
+        const linea = gsap.timeline({
+            paused: true,
+            defaults: { ease: "power2.out" },
+        });
+
+        linea
+            .to(renglones, {
+                    opacity: 1,
+                    x: "0%",
+                    y: "0%",
+                    scale: 1,
+                    duration: 1.2,
+                    stagger: 0.09,
+                    ease: "power3.out",
+                })
+            .to(hadas, { opacity: 1, duration: 1, stagger: 0.25 }, 0.4);
+
+        ScrollTrigger.create({
+            trigger: seccion,
+            start: "top 80%",
+            onEnter: () => linea.restart(),
+            onLeaveBack: () => linea.pause(0),
+        });
+    });
+</script>

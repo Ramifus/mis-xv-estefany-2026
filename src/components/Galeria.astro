@@ -1,0 +1,683 @@
+---
+// src/components/Galeria.astro
+// La galería de fotos de la quinceañera. Mismo armado que Modelo.astro
+// —carrusel con Ken Burns, círculo de progreso, miniaturas y la galería
+// a pantalla completa— pero con la temática del bosque: el ramo arriba,
+// la onda y los detalles en dorado, el texto en verde musgo y el modal
+// en un verde bosque profundo en lugar de negro.
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const titulo = "Galería de fotos";
+const subtitulo = "Recuerdos que no se olvidan, se quedan para siempre en el corazón";
+const credito = "Mis recuerdos";
+// Las fotos salen de /public/imagenes/ (foto1.webp … foto4.webp)
+const fotos = [1, 2, 3, 4].map((n) => ({
+    src: `/imagenes/foto${n}.webp`,
+    alt: `Foto ${n} de la quinceañera`,
+}));
+// ──────────────────────────────────────────────────────────────
+---
+
+<section class="relative w-full py-8 px-6" id="seccion-galeria">
+
+    <!-- TÍTULO -->
+    <div class="text-center mb-8 opacity-0" id="galeria-titulo">
+        <img
+            class="ramo"
+            src="/imagenes/centro.png"
+            alt=""
+            aria-hidden="true"
+            width="380"
+            height="197"
+        />
+        <h2 class="titulo font-charm">{titulo}</h2>
+
+        <!-- La onda dorada de la invitación -->
+        <svg class="onda" viewBox="0 0 400 30" aria-hidden="true" focusable="false">
+            <g stroke="#c0993f" stroke-width="1.5" fill="none" stroke-linecap="round">
+                <path d="M26,15 C56,3 86,27 116,15 C140,5 160,10 172,15"></path>
+                <path d="M374,15 C344,3 314,27 284,15 C260,5 240,10 228,15"></path>
+            </g>
+            <g fill="#c0993f">
+                <path
+                    d="M200,2 C201.5,10 205,13.5 213,15 C205,16.5 201.5,20 200,28 C198.5,20 195,16.5 187,15 C195,13.5 198.5,10 200,2 Z"
+                ></path>
+                <circle cx="178" cy="15" r="2.2"></circle>
+                <circle cx="222" cy="15" r="2.2"></circle>
+            </g>
+        </svg>
+
+        <p class="subtitulo font-charm">{subtitulo}</p>
+    </div>
+
+    <!-- CARRUSEL -->
+    <div class="max-w-md mx-auto relative z-10">
+        <div id="galeria-wrapper" class="relative w-full opacity-0">
+            <!-- Esquinas decorativas en dorado -->
+            <div class="absolute -inset-3 rounded-[2rem] pointer-events-none z-0">
+                <div class="esquina absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 rounded-tl-2xl"></div>
+                <div class="esquina absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 rounded-tr-2xl"></div>
+                <div class="esquina absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 rounded-bl-2xl"></div>
+                <div class="esquina absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 rounded-br-2xl"></div>
+            </div>
+
+            <!-- Viewport slides: el marco dorado fino alrededor de la foto -->
+            <div
+                class="relative overflow-hidden rounded-[1.5rem] z-10"
+                id="slides-viewport"
+                style="aspect-ratio: 3/4;"
+            ></div>
+
+            <!-- Gradiente inferior, en verde bosque -->
+            <div
+                class="absolute bottom-0 left-0 right-0 h-32 z-20 pointer-events-none rounded-b-[1.5rem]"
+                style="background: linear-gradient(to top, rgba(28, 40, 26, 0.55), transparent);"
+            ></div>
+
+            <!-- Número slide -->
+            <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3">
+                <div class="w-6 h-px bg-white/40"></div>
+                <span id="num-slide" class="font-charm text-white/90 text-lg tracking-widest">01</span>
+                <div class="w-6 h-px bg-white/40"></div>
+            </div>
+
+            <!-- Círculo progreso -->
+            <div class="absolute top-4 right-4 z-30">
+                <svg width="36" height="36" viewBox="0 0 36 36" class="rotate-[-90deg]">
+                    <circle cx="18" cy="18" r="15" fill="none" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2"></circle>
+                    <circle
+                        id="progreso-circulo"
+                        cx="18" cy="18" r="15"
+                        fill="none"
+                        stroke="rgba(214, 178, 96, 0.95)"
+                        stroke-width="2"
+                        stroke-dasharray="94.2"
+                        stroke-dashoffset="94.2"
+                        stroke-linecap="round"
+                    ></circle>
+                </svg>
+            </div>
+
+            <!-- Dots lateral -->
+            <div class="absolute left-3 top-1/2 -translate-y-1/2 z-30 flex flex-col gap-2" id="dots-lateral"></div>
+        </div>
+
+        <!-- MINIATURAS -->
+        <div class="mt-4 mb-2 opacity-0" id="miniaturas-container">
+            <div
+                class="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory"
+                id="miniaturas-track"
+                style="scrollbar-width: none; -ms-overflow-style: none;"
+            ></div>
+        </div>
+
+        <!-- BOTÓN VER GALERÍA -->
+        <div class="flex justify-center mt-6 mb-2 opacity-0" id="btn-galeria-container">
+            <button id="btn-ver-galeria" class="boton-galeria group font-charm">
+                <svg class="w-4 h-4 transition-transform duration-300 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="7" rx="1" stroke-width="1.5"></rect>
+                    <rect x="14" y="3" width="7" height="7" rx="1" stroke-width="1.5"></rect>
+                    <rect x="3" y="14" width="7" height="7" rx="1" stroke-width="1.5"></rect>
+                    <rect x="14" y="14" width="7" height="7" rx="1" stroke-width="1.5"></rect>
+                </svg>
+                Ver galería
+            </button>
+        </div>
+
+        <!-- Crédito -->
+        <div class="flex items-center justify-center gap-4 mt-4 opacity-0" id="credito-galeria">
+            <div style="height:1px; flex:1; background: linear-gradient(to right, transparent, #c0993f);"></div>
+            <span class="credito font-charm">{credito}</span>
+            <div style="height:1px; flex:1; background: linear-gradient(to left, transparent, #c0993f);"></div>
+        </div>
+    </div>
+
+    <!-- MODAL FULLSCREEN, en verde bosque profundo -->
+    <div
+        id="modal-galeria"
+        class="fixed inset-0 z-50 hidden items-center justify-center"
+        style="background: rgba(22, 32, 21, 0.97);"
+    >
+        <div class="absolute inset-0 pointer-events-none overflow-hidden" id="modal-particulas"></div>
+
+        <button
+            id="cerrar-modal"
+            aria-label="Cerrar galería"
+            class="boton-modal absolute top-6 right-6 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 z-50 hover:rotate-90"
+        >
+            <svg class="w-5 h-5" fill="none" stroke="#d6b260" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <div class="relative w-full h-full flex items-center justify-center px-4 md:px-20">
+            <button
+                id="btn-anterior"
+                aria-label="Foto anterior"
+                class="boton-modal absolute left-3 md:left-8 z-40 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+            >
+                <svg class="w-6 h-6" fill="none" stroke="#d6b260" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+
+            <div class="relative w-full max-w-xs md:max-w-md z-30" id="modal-contenido">
+                <div class="absolute -inset-4 pointer-events-none">
+                    <div class="esquina-modal absolute top-0 left-0 w-6 h-6 border-t border-l"></div>
+                    <div class="esquina-modal absolute top-0 right-0 w-6 h-6 border-t border-r"></div>
+                    <div class="esquina-modal absolute bottom-0 left-0 w-6 h-6 border-b border-l"></div>
+                    <div class="esquina-modal absolute bottom-0 right-0 w-6 h-6 border-b border-r"></div>
+                </div>
+                <div id="modal-track" class="flex will-change-transform"></div>
+                <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-3 whitespace-nowrap">
+                    <span id="modal-num" class="font-charm text-base" style="color: rgba(214, 178, 96, 0.85);">01</span>
+                    <div class="flex gap-1" id="modal-dots-mini"></div>
+                    <span class="font-charm text-white/40 text-base" id="modal-total">04</span>
+                </div>
+            </div>
+
+            <button
+                id="btn-siguiente"
+                aria-label="Foto siguiente"
+                class="boton-modal absolute right-3 md:right-8 z-40 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+            >
+                <svg class="w-6 h-6" fill="none" stroke="#d6b260" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Las fotos viajan al script como datos, no escritas en él -->
+    <script is:inline type="application/json" id="galeria-fotos" set:html={JSON.stringify(fotos)} />
+</section>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Los colores de la galería: el dorado de la invitación
+    const DORADO = (a: number) => `rgba(192, 153, 63, ${a})`;
+    const DORADO_CLARO = (a: number) => `rgba(214, 178, 96, ${a})`;
+
+    if (typeof window !== "undefined") {
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // ── GSAP SET INICIAL ──
+            gsap.set("#galeria-titulo", { opacity: 0, y: -30 });
+            gsap.set("#galeria-wrapper", { opacity: 0, scale: 0.96 });
+            gsap.set("#miniaturas-container", { opacity: 0, y: 10 });
+            gsap.set("#btn-galeria-container", { opacity: 0, y: 10 });
+            gsap.set("#credito-galeria", { opacity: 0 });
+
+            ScrollTrigger.create({
+                trigger: "#seccion-galeria",
+                start: "top 85%",
+                onEnter: () => {
+                    const tl = gsap.timeline();
+                    tl.to("#galeria-titulo", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" })
+                      .to("#galeria-wrapper", { opacity: 1, scale: 1, duration: 1, ease: "power3.out" }, "-=0.3")
+                      .to("#miniaturas-container", { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.3")
+                      .to("#btn-galeria-container", { opacity: 1, y: 0, duration: 0.6, ease: "back.out(1.5)" }, "-=0.3")
+                      .to("#credito-galeria", { opacity: 1, duration: 0.6 }, "-=0.3");
+                },
+                onLeaveBack: () => {
+                    gsap.set("#galeria-titulo", { opacity: 0, y: -30 });
+                    gsap.set("#galeria-wrapper", { opacity: 0, scale: 0.96 });
+                    gsap.set("#miniaturas-container", { opacity: 0, y: 10 });
+                    gsap.set("#btn-galeria-container", { opacity: 0, y: 10 });
+                    gsap.set("#credito-galeria", { opacity: 0 });
+                },
+            });
+
+            // ── FOTOS: salen del frontmatter (foto1.webp … foto4.webp) ──
+            const fotos: { src: string; alt: string }[] = JSON.parse(
+                document.getElementById("galeria-fotos")?.textContent ?? "[]",
+            );
+            if (fotos.length === 0) return;
+
+            const DURACION = 4500;
+            const CIRCUNFERENCIA = 94.2;
+            const viewport = document.getElementById("slides-viewport");
+            const dotsLateral = document.getElementById("dots-lateral");
+            const numSlide = document.getElementById("num-slide");
+            const progresoCirculo = document.getElementById("progreso-circulo");
+            const miniaturasTrack = document.getElementById("miniaturas-track");
+
+            fotos.forEach((foto, i) => {
+                if (!viewport) return;
+                const slide = document.createElement("div");
+                slide.className = "slide-item absolute inset-0 cursor-pointer";
+                slide.setAttribute("data-index", i.toString());
+                slide.style.cssText = `opacity:${i === 0 ? "1" : "0"}; z-index:${i === 0 ? "2" : "1"};`;
+                slide.innerHTML = `
+                    <div class="w-full h-full overflow-hidden">
+                        <img src="${foto.src}" alt="${foto.alt}"
+                            class="slide-img w-full h-full object-cover object-top"
+                            style="transform-origin: center top;" />
+                    </div>
+                    <div class="absolute inset-0"
+                        style="background: linear-gradient(135deg, ${DORADO(0.08)} 0%, transparent 50%, rgba(75, 90, 67, 0.08) 100%);">
+                    </div>
+                    <div class="slide-hover-icon absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-500">
+                        <div class="relative">
+                            <div class="w-20 h-20 rounded-full flex items-center justify-center"
+                                style="background: rgba(255, 255, 255, 0.18); backdrop-filter: blur(8px); border: 1px solid ${DORADO_CLARO(0.6)};">
+                                <svg class="w-8 h-8" fill="none" stroke="#f3e2b4" viewBox="0 0 24 24">
+                                    <circle cx="10.5" cy="10.5" r="6.5" stroke-width="1.5"></circle>
+                                    <path d="M15.5 15.5L21 21" stroke-width="1.5"></path>
+                                </svg>
+                            </div>
+                            <div class="absolute inset-0 rounded-full animate-ping"
+                                style="border: 1px solid ${DORADO_CLARO(0.5)};"></div>
+                        </div>
+                    </div>
+                `;
+                slide.addEventListener("mouseenter", () => {
+                    const icon = slide.querySelector(".slide-hover-icon") as HTMLElement;
+                    if (icon) icon.style.opacity = "1";
+                });
+                slide.addEventListener("mouseleave", () => {
+                    const icon = slide.querySelector(".slide-hover-icon") as HTMLElement;
+                    if (icon) icon.style.opacity = "0";
+                });
+                slide.addEventListener("click", () => abrirModal(i));
+                viewport.appendChild(slide);
+
+                if (dotsLateral) {
+                    const dot = document.createElement("div");
+                    dot.className = "dot-lat transition-all duration-500 rounded-full";
+                    dot.style.cssText = `width:${i === 0 ? "8px" : "4px"}; height:${i === 0 ? "8px" : "4px"}; background:${i === 0 ? DORADO_CLARO(0.95) : "rgba(255, 255, 255, 0.55)"}`;
+                    dotsLateral.appendChild(dot);
+                }
+
+                if (miniaturasTrack) {
+                    const mini = document.createElement("button");
+                    mini.className = "miniatura-btn flex-shrink-0 snap-start rounded-xl overflow-hidden";
+                    mini.setAttribute("data-mini", i.toString());
+                    mini.setAttribute("aria-label", `Ver foto ${i + 1}`);
+                    mini.style.cssText = `width:52px; height:52px; border:2px solid ${i === 0 ? DORADO(0.95) : DORADO(0.25)}; opacity:${i === 0 ? "1" : "0.6"};`;
+                    mini.innerHTML = `<img src="${foto.src}" alt="" class="w-full h-full object-cover object-top" />`;
+                    mini.addEventListener("click", () => {
+                        irASlide(i);
+                        clearTimeout(autoTimer);
+                        programarSiguiente();
+                    });
+                    miniaturasTrack.appendChild(mini);
+                }
+            });
+
+            let kbTween: gsap.core.Tween | null = null;
+            function iniciarKenBurns(index: number) {
+                if (kbTween) kbTween.kill();
+                const slides = document.querySelectorAll(".slide-item");
+                const img = slides[index]?.querySelector(".slide-img") as HTMLElement;
+                if (!img) return;
+                gsap.set(img, { scale: 1, x: "0%", y: "0%" });
+                const dirs = [
+                    { scale: 1.08, x: "-2%", y: "-2%" },
+                    { scale: 1.08, x: "2%", y: "-1%" },
+                    { scale: 1.06, x: "-1%", y: "2%" },
+                    { scale: 1.07, x: "1%", y: "-2%" },
+                ];
+                const d = dirs[index % dirs.length];
+                kbTween = gsap.to(img, {
+                    scale: d.scale, x: d.x, y: d.y,
+                    duration: DURACION / 1000 + 1, ease: "none",
+                });
+            }
+
+            let progresoTween: gsap.core.Tween | null = null;
+            function iniciarProgreso() {
+                if (progresoTween) progresoTween.kill();
+                if (!progresoCirculo) return;
+                gsap.set(progresoCirculo, { strokeDashoffset: CIRCUNFERENCIA });
+                progresoTween = gsap.to(progresoCirculo, {
+                    strokeDashoffset: 0, duration: DURACION / 1000, ease: "none",
+                });
+            }
+
+            let slideActual = 0;
+            let autoTimer: any;
+            let pausado = false;
+            let rafId: number | null = null;
+
+            function actualizarDots(index: number) {
+                document.querySelectorAll(".dot-lat").forEach((d, i) => {
+                    const el = d as HTMLElement;
+                    el.style.width = i === index ? "8px" : "4px";
+                    el.style.height = i === index ? "8px" : "4px";
+                    el.style.background = i === index ? DORADO_CLARO(0.95) : "rgba(255, 255, 255, 0.55)";
+                });
+                if (numSlide) numSlide.textContent = String(index + 1).padStart(2, "0");
+                document.querySelectorAll(".miniatura-btn").forEach((m, i) => {
+                    const el = m as HTMLElement;
+                    el.style.border = `2px solid ${i === index ? DORADO(0.95) : DORADO(0.25)}`;
+                    el.style.opacity = i === index ? "1" : "0.6";
+                });
+                const miniActiva = document.querySelector(`[data-mini="${index}"]`) as HTMLElement;
+                const track = document.getElementById("miniaturas-track");
+                if (miniActiva && track) {
+                    const offsetLeft = miniActiva.offsetLeft - track.clientWidth / 2 + miniActiva.clientWidth / 2;
+                    track.scrollTo({ left: offsetLeft, behavior: "smooth" });
+                }
+            }
+
+            function irASlide(nuevoIndex: number) {
+                if (rafId !== null) cancelAnimationFrame(rafId);
+                const slides = document.querySelectorAll(".slide-item");
+                const anterior = slideActual;
+                slideActual = (nuevoIndex + fotos.length) % fotos.length;
+                const slideAnterior = slides[anterior] as HTMLElement;
+                const slideSiguiente = slides[slideActual] as HTMLElement;
+                slideAnterior.style.zIndex = "2";
+                slideSiguiente.style.zIndex = "3";
+                slideSiguiente.style.opacity = "0";
+                const duracionMs = 1400;
+                let start: number | null = null;
+                function frame(ts: number) {
+                    if (!start) start = ts;
+                    const t = Math.min((ts - start) / duracionMs, 1);
+                    const ease = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+                    slideSiguiente.style.opacity = String(ease);
+                    slideAnterior.style.opacity = String(1 - ease);
+                    if (t < 1) {
+                        rafId = requestAnimationFrame(frame);
+                    } else {
+                        slideSiguiente.style.opacity = "1";
+                        slideSiguiente.style.zIndex = "2";
+                        slideAnterior.style.opacity = "0";
+                        slideAnterior.style.zIndex = "1";
+                        rafId = null;
+                    }
+                }
+                rafId = requestAnimationFrame(frame);
+                actualizarDots(slideActual);
+                iniciarKenBurns(slideActual);
+                iniciarProgreso();
+            }
+
+            function programarSiguiente() {
+                clearTimeout(autoTimer);
+                autoTimer = setTimeout(() => {
+                    if (!pausado) { irASlide(slideActual + 1); programarSiguiente(); }
+                }, DURACION);
+            }
+
+            const wrapper = document.getElementById("galeria-wrapper");
+            wrapper?.addEventListener("mouseenter", () => { pausado = true; progresoTween?.pause(); kbTween?.pause(); });
+            wrapper?.addEventListener("mouseleave", () => { pausado = false; progresoTween?.resume(); kbTween?.resume(); programarSiguiente(); });
+
+            let touchX = 0;
+            viewport?.addEventListener("touchstart", (e) => { touchX = e.touches[0].clientX; }, { passive: true });
+            viewport?.addEventListener("touchend", (e) => {
+                const diff = touchX - e.changedTouches[0].clientX;
+                if (Math.abs(diff) > 50) { irASlide(diff > 0 ? slideActual + 1 : slideActual - 1); programarSiguiente(); }
+            });
+
+            iniciarKenBurns(0);
+            actualizarDots(0);
+
+            const observerGaleria = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        pausado = false; iniciarProgreso(); programarSiguiente();
+                    } else {
+                        pausado = true; clearTimeout(autoTimer); autoTimer = null;
+                        progresoTween?.pause(); kbTween?.pause();
+                        if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+                    }
+                });
+            }, { threshold: 0, rootMargin: "0px" });
+
+            const galeriaSection = document.getElementById("seccion-galeria");
+            if (galeriaSection) observerGaleria.observe(galeriaSection);
+
+            // ── MODAL ──
+            const modal = document.getElementById("modal-galeria");
+            const modalTrack = document.getElementById("modal-track");
+            const modalNum = document.getElementById("modal-num");
+            const modalTotal = document.getElementById("modal-total");
+            const modalDotsMini = document.getElementById("modal-dots-mini");
+            const btnAnterior = document.getElementById("btn-anterior");
+            const btnSiguiente = document.getElementById("btn-siguiente");
+            const cerrarModalBtn = document.getElementById("cerrar-modal");
+            const btnVerGaleria = document.getElementById("btn-ver-galeria");
+
+            if (modalTotal) modalTotal.textContent = String(fotos.length).padStart(2, "0");
+
+            fotos.forEach((foto) => {
+                if (!modalTrack) return;
+                const slide = document.createElement("div");
+                slide.className = "min-w-full flex items-center justify-center px-2";
+                slide.innerHTML = `
+                    <div class="relative w-full rounded-2xl overflow-hidden" style="border:1px solid ${DORADO(0.35)};">
+                        <img src="${foto.src}" alt="${foto.alt}" class="w-full h-auto max-h-[80vh] object-contain" style="background:rgba(0,0,0,0.25);" />
+                    </div>
+                `;
+                modalTrack.appendChild(slide);
+            });
+
+            fotos.forEach((_, i) => {
+                if (!modalDotsMini) return;
+                const d = document.createElement("div");
+                d.className = "modal-dot-mini rounded-full";
+                d.style.cssText = `width:${i === 0 ? "16px" : "4px"}; height:4px; background:${i === 0 ? DORADO_CLARO(0.85) : DORADO_CLARO(0.25)}; transition:all 0.4s;`;
+                modalDotsMini.appendChild(d);
+            });
+
+            let indiceModal = 0;
+
+            function actualizarModalDots(index: number) {
+                document.querySelectorAll(".modal-dot-mini").forEach((d, i) => {
+                    const el = d as HTMLElement;
+                    el.style.width = i === index ? "16px" : "4px";
+                    el.style.background = i === index ? DORADO_CLARO(0.85) : DORADO_CLARO(0.25);
+                });
+                if (modalNum) modalNum.textContent = String(index + 1).padStart(2, "0");
+            }
+
+            const moverModal = (nuevo: number, animar = true) => {
+                if (!modalTrack) return;
+                indiceModal = (nuevo + fotos.length) % fotos.length;
+                if (animar) {
+                    gsap.to(modalTrack, { x: `-${indiceModal * 100}%`, duration: 0.6, ease: "power3.out" });
+                } else {
+                    gsap.set(modalTrack, { x: `-${indiceModal * 100}%` });
+                }
+                actualizarModalDots(indiceModal);
+            };
+
+            // Lucecitas doradas flotando, como las del bosque
+            function crearParticulas() {
+                const container = document.getElementById("modal-particulas");
+                if (!container) return;
+                container.innerHTML = "";
+                for (let i = 0; i < 14; i++) {
+                    const p = document.createElement("div");
+                    const t = Math.random() * 3 + 1;
+                    p.style.cssText = `position:absolute; width:${t}px; height:${t}px; background:${DORADO_CLARO(Math.random() * 0.4 + 0.25)}; box-shadow:0 0 6px ${DORADO_CLARO(0.6)}; border-radius:50%; left:${Math.random() * 100}%; top:${Math.random() * 100}%;`;
+                    container.appendChild(p);
+                    gsap.to(p, {
+                        y: -30 - Math.random() * 40, x: (Math.random() - 0.5) * 20,
+                        opacity: 0, duration: 3 + Math.random() * 4,
+                        repeat: -1, delay: Math.random() * 3, ease: "none",
+                    });
+                }
+            }
+
+            const abrirModal = (indice: number) => {
+                if (!modal) return;
+                pausado = true; clearTimeout(autoTimer);
+                progresoTween?.pause(); kbTween?.pause();
+                modal.classList.remove("hidden");
+                modal.classList.add("flex");
+                document.body.style.overflow = "hidden";
+                moverModal(indice, false);
+                crearParticulas();
+                gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" });
+                gsap.fromTo("#modal-contenido",
+                    { scale: 0.88, opacity: 0, y: 20 },
+                    { scale: 1, opacity: 1, y: 0, duration: 0.7, ease: "power3.out", delay: 0.1 }
+                );
+            };
+
+            const cerrarModalFn = () => {
+                if (!modal) return;
+                gsap.to("#modal-contenido", { scale: 0.88, opacity: 0, y: 20, duration: 0.4, ease: "power2.in" });
+                gsap.to(modal, {
+                    opacity: 0, duration: 0.4, ease: "power2.in", delay: 0.15,
+                    onComplete: () => {
+                        modal.classList.add("hidden");
+                        modal.classList.remove("flex");
+                        document.body.style.overflow = "";
+                        pausado = false; iniciarProgreso(); programarSiguiente();
+                    },
+                });
+            };
+
+            btnVerGaleria?.addEventListener("click", () => abrirModal(0));
+            btnAnterior?.addEventListener("click", (e) => { e.stopPropagation(); moverModal(indiceModal - 1); });
+            btnSiguiente?.addEventListener("click", (e) => { e.stopPropagation(); moverModal(indiceModal + 1); });
+            cerrarModalBtn?.addEventListener("click", (e) => { e.stopPropagation(); cerrarModalFn(); });
+            modal?.addEventListener("click", (e) => { if (e.target === modal) cerrarModalFn(); });
+
+            document.addEventListener("keydown", (e) => {
+                if (modal && !modal.classList.contains("hidden")) {
+                    if (e.key === "Escape") cerrarModalFn();
+                    if (e.key === "ArrowLeft") moverModal(indiceModal - 1);
+                    if (e.key === "ArrowRight") moverModal(indiceModal + 1);
+                }
+            });
+
+            let mTouchX = 0;
+            modal?.addEventListener("touchstart", (e) => { mTouchX = e.touches[0].clientX; }, { passive: true });
+            modal?.addEventListener("touchend", (e) => {
+                const diff = mTouchX - e.changedTouches[0].clientX;
+                if (Math.abs(diff) > 60) moverModal(diff > 0 ? indiceModal + 1 : indiceModal - 1);
+            });
+        });
+    }
+</script>
+
+<style>
+    /* ── Encabezado, con el mismo lenguaje que las demás secciones ── */
+    .ramo {
+        display: block;
+        width: 52%;
+        max-width: 220px;
+        height: auto;
+        margin: 0 auto 1.25rem;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    .titulo {
+        color: #c0993f;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1.15;
+    }
+
+    .onda {
+        display: block;
+        width: 68%;
+        max-width: 280px;
+        height: auto;
+        margin: 0.75rem auto;
+    }
+
+    .subtitulo {
+        color: #4b5a43;
+        font-size: 1.15rem;
+        line-height: 1.4;
+    }
+
+    .credito {
+        color: #8a6a22;
+        font-size: 1rem;
+    }
+
+    /* Las esquinas del marco, en dorado */
+    .esquina {
+        border-color: rgba(192, 153, 63, 0.6);
+    }
+    .esquina-modal {
+        border-color: rgba(214, 178, 96, 0.45);
+    }
+
+    /* El hilo dorado fino alrededor de la foto */
+    #slides-viewport {
+        position: relative;
+        contain: strict;
+        will-change: transform;
+        border: 1px solid rgba(192, 153, 63, 0.7);
+        box-shadow: 0 6px 22px rgba(60, 75, 50, 0.3);
+    }
+    .slide-item {
+        will-change: opacity;
+        contain: layout style;
+    }
+    .slide-img {
+        will-change: transform;
+    }
+    #modal-track {
+        will-change: transform;
+        display: flex;
+    }
+    #miniaturas-track {
+        /* "safe" centra cuando las miniaturas entran en el ancho y vuelve a
+           alinear a la izquierda si desbordan: sin eso, al desbordar quedan
+           recortadas las primeras y el scroll no llega a ellas. */
+        justify-content: safe center;
+    }
+    #miniaturas-track::-webkit-scrollbar {
+        display: none;
+    }
+    .miniatura-btn {
+        transition: border 0.3s, opacity 0.3s, transform 0.3s;
+    }
+    .miniatura-btn:hover {
+        opacity: 1 !important;
+        transform: scale(1.08);
+    }
+
+    /*
+       El botón, igual que "Ver ubicación": papel crema con hilo dorado.
+       El fondo va como degradado y no como color: el modo oscuro forzado
+       oscurece colores pero respeta las imágenes.
+    */
+    .boton-galeria {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 28px;
+        border: 1px solid #c0993f;
+        border-radius: 999px;
+        background-image: linear-gradient(#f6eddc, #efe1c6);
+        color: #8a6a22;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(150, 110, 40, 0.25);
+        transition: all 0.3s ease;
+    }
+    .boton-galeria:hover {
+        box-shadow: 0 4px 16px rgba(150, 110, 40, 0.4);
+        transform: translateY(-2px);
+    }
+
+    /* Los botones redondos del modal, en dorado sobre el verde */
+    .boton-modal {
+        background-image: linear-gradient(rgba(214, 178, 96, 0.14), rgba(214, 178, 96, 0.14));
+        border: 1px solid rgba(214, 178, 96, 0.4);
+    }
+
+    @keyframes ping {
+        75%, 100% { transform: scale(1.6); opacity: 0; }
+    }
+    .animate-ping {
+        animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+</style>

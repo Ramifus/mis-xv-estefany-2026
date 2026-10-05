@@ -1,0 +1,333 @@
+---
+// src/components/RecepcionSocial.astro
+// La recepción, con la temática del bosque encantado: el título, el
+// icono, el nombre del salón, la dirección, la hora resaltada y el botón
+// del mapa, sobre un papel velado con hilo dorado. Alrededor, las flores
+// y los hongos del bosque y un hada volando.
+//
+// Los datos salen de información.txt, el archivo del evento.
+//
+// Las medidas van en cqw —% del ancho de la columna— y no en
+// breakpoints: se ve igual en el celular, en la tablet y en la
+// computadora, como el resto de la invitación.
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const titulo = "Recepción";
+// El nombre va en dos renglones como mucho. Si se deja vacío, no se dibuja.
+const salon = ["Carol Eventos"];
+// La foto del salón, en lugar del icono
+const foto = "/imagenes/imagenubicacion.webp";
+const direccion = [
+    "5to Anillo, Radial 10, El Trillo",
+    "Frente al Surtidor San Luis 2",
+];
+const hora = "Hora: 19:30";
+const textoBoton = "Ver ubicación";
+// Enlace corto del propio Google Maps: abre el punto exacto y no una
+// búsqueda por nombre, que puede caer en otra sucursal.
+// Si se deja vacío, no se dibuja el botón.
+const mapa = "https://maps.app.goo.gl/SjZCL5wu1nc5JCYb8";
+// ──────────────────────────────────────────────────────────────
+---
+
+<section id="recepcion-social" class="seccion">
+    <!-- El bosque alrededor del papel -->
+    <img
+        class="flores"
+        src="/imagenes/floresizquieda.png"
+        alt=""
+        aria-hidden="true"
+        width="599"
+        height="639"
+    />
+    <img
+        class="hongos"
+        src="/imagenes/hongos.png"
+        alt=""
+        aria-hidden="true"
+        width="440"
+        height="501"
+    />
+    <img
+        class="hada"
+        src="/imagenes/ada.png"
+        alt=""
+        aria-hidden="true"
+        width="1390"
+        height="1132"
+    />
+
+    <div id="re-bloque" class="bloque">
+        <p class="titulo font-charm">{titulo}</p>
+
+        <!-- La foto del salón, enmarcada con el hilo dorado -->
+        <img
+            class="foto-salon"
+            src={foto}
+            alt={"Salón " + salon.join(" ")}
+            width="408"
+            height="306"
+            loading="lazy"
+        />
+
+        {salon.length > 0 && (
+            <div class="salon">
+                {salon.map((l) => <p class="font-charm">{l}</p>)}
+            </div>
+        )}
+
+        {direccion.length > 0 && (
+            <div class="direccion">
+                {direccion.map((l) => <p class="renglon font-charm">{l}</p>)}
+            </div>
+        )}
+
+        <p class="hora font-charm">{hora}</p>
+
+        {mapa && (
+            <a
+                class="boton font-charm"
+                href={mapa}
+                target="_blank"
+                rel="noopener noreferrer">{textoBoton}</a
+            >
+        )}
+    </div>
+</section>
+
+<style>
+    /*
+       container-type deja medir todo contra el ancho de la columna y no
+       de la pantalla: 1cqw es el 1% de ese ancho.
+
+       Sin fondo propio: se ve el bosque que pone el layout.
+    */
+    .seccion {
+        position: relative;
+        width: 100%;
+        padding: 12cqw 0 16cqw;
+        overflow: hidden;
+        container-type: inline-size;
+        background-color: transparent;
+    }
+
+    /* ── El bosque alrededor ────────────────────────────────── */
+    .flores {
+        position: absolute;
+        left: -10%;
+        bottom: -2%;
+        width: 40%;
+        height: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    .hongos {
+        position: absolute;
+        right: -8%;
+        bottom: -2%;
+        width: 32%;
+        height: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    /* El PNG del hada trae aire transparente alrededor, por eso la
+       medida es más grande que el hada que se ve */
+    .hada {
+        position: absolute;
+        right: -4%;
+        top: 2%;
+        width: 26%;
+        height: auto;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+        transform: scaleX(-1);
+        filter: drop-shadow(0 0 0.8cqw rgba(226, 178, 74, 0.4));
+    }
+
+    /*
+       El papel: apenas velado y con hilo dorado de marco, así lo escrito
+       se lee sobre el bosque sin taparlo. El velo va como degradado y no
+       como color: el modo oscuro forzado respeta las imágenes.
+    */
+    .bloque {
+        position: relative;
+        z-index: 1;
+        width: 80%;
+        margin: 0 auto;
+        padding: 7cqw 6cqw 8cqw;
+        border: 1px solid #d8bd85;
+        border-radius: 4cqw;
+        background-image: linear-gradient(
+            rgba(255, 255, 255, 0.84),
+            rgba(255, 255, 255, 0.74)
+        );
+        text-align: center;
+    }
+
+    .titulo {
+        color: #c0993f;
+        font-size: 9cqw;
+        font-weight: 700;
+        line-height: 1.1;
+    }
+
+    /* ── La foto del salón ───────────────────────────────────
+       En el lugar del icono: esquinas redondeadas, el hilo dorado de la
+       invitación y una sombra suave para despegarla del papel. */
+    .foto-salon {
+        display: block;
+        width: 82%;
+        height: auto;
+        aspect-ratio: 408 / 306;
+        object-fit: cover;
+        margin: 6cqw auto 4cqw;
+        border: 2px solid #c0993f;
+        border-radius: 4cqw;
+        box-shadow: 0 0.6cqw 2cqw rgba(90, 110, 70, 0.3);
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    .salon p {
+        color: #4b5a43;
+        font-size: 6.4cqw;
+        font-weight: 700;
+        line-height: 1.25;
+    }
+
+    .direccion {
+        margin-top: 2.6cqw;
+    }
+
+    .renglon {
+        color: #4b5a43;
+        font-size: 5cqw;
+        line-height: 1.4;
+    }
+
+    /*
+       La hora es el dato que el invitado busca primero: va sola, más
+       grande y en dorado.
+    */
+    .hora {
+        margin-top: 4cqw;
+        color: #c0993f;
+        font-size: 7.4cqw;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    /* ── El botón ───────────────────────────────────────────
+       Dorado sobre claro, con el hilo del mismo tono que el marco. El
+       fondo va como degradado y no como color, por lo de siempre. */
+    .boton {
+        display: inline-block;
+        margin-top: 5cqw;
+        padding: 2.4cqw 7cqw;
+        border: 1px solid #c0993f;
+        border-radius: 999px;
+        background-image: linear-gradient(#f6eddc, #efe1c6);
+        color: #8a6a22;
+        font-size: 5.2cqw;
+        font-weight: 700;
+        font-variant-caps: small-caps;
+        letter-spacing: 0.06em;
+        line-height: 1;
+        text-decoration: none;
+        box-shadow: 0 0.3cqw 0.9cqw rgba(150, 110, 40, 0.25);
+    }
+
+    /* El hada flota despacio; si el visitante pidió menos movimiento, se
+       queda quieta */
+    @media (prefers-reduced-motion: no-preference) {
+        .hada {
+            animation: re-volar 8s ease-in-out infinite;
+        }
+    }
+
+    @keyframes re-volar {
+        0%,
+        100% {
+            transform: scaleX(-1) translate(0, 0) rotate(0deg);
+        }
+        50% {
+            transform: scaleX(-1) translate(1.4cqw, -2.4cqw) rotate(3deg);
+        }
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const seccion = document.getElementById("recepcion-social");
+        const bloque = document.getElementById("re-bloque");
+        if (!seccion || !bloque) return;
+
+        // Sin animación si el visitante pidió menos movimiento: la
+        // sección ya está armada y visible en el HTML.
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+            return;
+
+        const renglones = Array.from(bloque.children);
+        const bosque = seccion.querySelectorAll(".flores, .hongos, .hada");
+
+        /*
+           La entrada: todos los renglones arrancan al mismo tiempo pero
+           cada uno viene de un lado distinto —el primero baja desde
+           arriba y los demás entran alternando izquierda y derecha—, y
+           además crecen un poquito. Así el armado se nota, que es la
+           gracia, sin que la sección tarde en quedar lista.
+        */
+        gsap.set(renglones, {
+            opacity: 0,
+            x: (i) => (i === 0 ? "0%" : i % 2 === 1 ? "-14%" : "14%"),
+            y: (i) => (i === 0 ? "-45%" : "0%"),
+            scale: 0.92,
+        });
+        /*
+           Las flores entran desde la izquierda y los hongos desde la
+           derecha, los dos al mismo tiempo: el bosque se cierra alrededor
+           de lo escrito.
+        */
+        gsap.set(bosque, {
+            opacity: 0,
+            x: (i) => (i === 0 ? "-16%" : i === 1 ? "16%" : "0%"),
+            y: (i) => (i === 2 ? "-16%" : "0%"),
+        });
+
+        const linea = gsap.timeline({
+            paused: true,
+            defaults: { ease: "power2.out" },
+        });
+
+        linea
+            .to(bosque, { opacity: 1, x: "0%", y: "0%", duration: 1.4, stagger: 0.12, ease: "power3.out" })
+            .to(
+                renglones,
+                {
+                    opacity: 1,
+                    x: "0%",
+                    y: "0%",
+                    scale: 1,
+                    duration: 1.2,
+                    stagger: 0.09,
+                    ease: "power3.out",
+                },
+                0.2,
+            );
+
+        ScrollTrigger.create({
+            trigger: seccion,
+            start: "top 78%",
+            onEnter: () => linea.restart(),
+            onLeaveBack: () => linea.pause(0),
+        });
+    });
+</script>

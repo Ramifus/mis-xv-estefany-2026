@@ -1,0 +1,221 @@
+---
+// src/components/NombresPadres.astro
+// Los padres y los padrinos, con la rama de flores blancas (flor2.png) a
+// cada costado: la misma imagen, la de la derecha espejada.
+//
+// La sección no lleva fondo propio: deja ver el bosque que pone el
+// layout, apagado por un velo claro para que las letras se lean.
+//
+// Todo se mide en % del propio cuadro (container-type: inline-size), así
+// que guarda la misma proporción en cualquier celular.
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const tituloPadres = "Con la bendición de Dios y de mis padres";
+const padres = ["Óscar Iraipy", "Patty Paola Huanca"];
+
+// Los padrinos: cuando lleguen los nombres, se agregan acá y el bloque
+// aparece solo. Vacío, no se dibuja.
+const tituloPadrinos = "Y de mis padrinos";
+const padrinos: string[] = [];
+// ──────────────────────────────────────────────────────────────
+---
+
+<!-- ── El separador entre la dedicatoria y esta sección ───────
+     La misma guirnalda que va arriba de la dedicatoria: se monta sobre
+     la juntura y tapa la línea de un componente al otro. -->
+<img
+    class="separador"
+    src="/imagenes/separador.png"
+    alt=""
+    aria-hidden="true"
+    width="1080"
+    height="274"
+/>
+
+<section id="nombres-padres" class="seccion">
+    <!-- Las ramas de flores de los costados -->
+    <img
+        class="flor flor-izq"
+        src="/imagenes/flor2.png"
+        alt=""
+        aria-hidden="true"
+        width="174"
+        height="630"
+    />
+    <img
+        class="flor flor-der"
+        src="/imagenes/flor2.png"
+        alt=""
+        aria-hidden="true"
+        width="174"
+        height="630"
+    />
+
+    <!-- Los nombres -->
+    <div id="np-texto" class="texto">
+        <p class="titulo font-great-vibes">{tituloPadres}</p>
+        {padres.map((n) => <p class="nombre font-charm">{n}</p>)}
+
+        {
+            padrinos.length > 0 && (
+                <>
+                    <p class="titulo titulo-abajo font-great-vibes">
+                        {tituloPadrinos}
+                    </p>
+                    {padrinos.map((n) => (
+                        <p class="nombre font-charm">{n}</p>
+                    ))}
+                </>
+            )
+        }
+    </div>
+</section>
+
+<style>
+    /*
+       La sección crece con lo que tiene adentro: no hay dibujo de fondo
+       que mande la altura, solo las dos ramas de los costados.
+    */
+    .seccion {
+        position: relative;
+        width: 100%;
+        padding: 14cqw 0 18cqw;
+        overflow: hidden;
+        container-type: inline-size;
+        background-color: transparent;
+    }
+
+    /* ── La guirnalda de arriba ─────────────────────────────── */
+    .separador {
+        position: relative;
+        z-index: 2;
+        display: block;
+        width: 100%;
+        height: auto;
+        /* queda por debajo de las flores y los hongos de la
+           dedicatoria, no encima */
+        margin-top: -7%;
+        margin-bottom: 0;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    /* ── Las ramas de flores ────────────────────────────────
+       Van pegadas a los bordes y centradas de alto; la de la derecha es
+       la misma imagen dada vuelta. */
+    .flor {
+        position: absolute;
+        top: 50%;
+        width: 14%;
+        height: auto;
+        transform: translateY(-50%);
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    .flor-izq {
+        left: -3%;
+    }
+
+    .flor-der {
+        right: -3%;
+        transform: translateY(-50%) scaleX(-1);
+    }
+
+    /* ── Los nombres ────────────────────────────────────────
+       La columna del medio, entre las dos ramas. */
+    .texto {
+        position: relative;
+        width: 68%;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    /*
+       El renglón de la bendición va en Great Vibes: sin mayúsculas
+       forzadas ni espaciado entre letras, que esta cursiva no los
+       tolera.
+    */
+    .titulo {
+        color: #c0993f;
+        font-size: 9cqw;
+        line-height: 1.25;
+        margin-bottom: 6cqw;
+    }
+
+    .titulo-abajo {
+        margin-top: 6cqw;
+    }
+
+    .nombre {
+        color: #4b5a43;
+        font-size: 6.6cqw;
+        line-height: 1.5;
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const seccion = document.getElementById("nombres-padres");
+        const texto = document.getElementById("np-texto");
+        if (!seccion || !texto) return;
+
+        // Sin animación si el visitante pidió menos movimiento: la
+        // sección ya está armada y visible en el HTML.
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+            return;
+
+        const renglones = Array.from(texto.children);
+        const ramas = seccion.querySelectorAll(".flor");
+
+        /*
+           La entrada: todos los renglones arrancan al mismo tiempo pero
+           cada uno viene de un lado distinto —el primero baja desde
+           arriba y los demás entran alternando izquierda y derecha—, y
+           además crecen un poquito. Así el armado se nota, que es la
+           gracia, sin que la sección tarde en quedar lista.
+        */
+        gsap.set(renglones, {
+            opacity: 0,
+            x: (i) => (i === 0 ? "0%" : i % 2 === 1 ? "-14%" : "14%"),
+            y: (i) => (i === 0 ? "-45%" : "0%"),
+            scale: 0.92,
+        });
+        gsap.set(ramas, { opacity: 0, x: (i) => (i === 0 ? "-6%" : "6%") });
+
+        const linea = gsap.timeline({
+            paused: true,
+            defaults: { ease: "power2.out" },
+        });
+
+        linea
+            .to(ramas, { opacity: 1, x: "0%", duration: 1.2 })
+            .to(
+                renglones,
+                {
+                    opacity: 1,
+                    x: "0%",
+                    y: "0%",
+                    scale: 1,
+                    duration: 1.2,
+                    stagger: 0.09,
+                    ease: "power3.out",
+                },
+                0.3,
+            );
+
+        // Entra con el scroll, como las demás secciones
+        ScrollTrigger.create({
+            trigger: seccion,
+            start: "top 78%",
+            onEnter: () => linea.restart(),
+            onLeaveBack: () => linea.pause(0),
+        });
+    });
+</script>

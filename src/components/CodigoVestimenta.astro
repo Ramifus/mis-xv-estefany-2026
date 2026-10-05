@@ -1,0 +1,339 @@
+---
+// src/components/CodigoVestimenta.astro
+// El código de vestimenta, con la temática del bosque: el ramo de flores
+// arriba, el título, la silueta del traje y el vestido, y la aclaración
+// del color reservado para la quinceañera.
+//
+// Acá no va tarjeta: el texto se apoya directo sobre el bosque del
+// layout, con los adornos dorados haciendo de marco. Las otras secciones
+// ya traen papel, y una más seguida se vuelve monótono.
+//
+// Las medidas van en cqw —% del ancho de la columna— y no en
+// breakpoints: se ve igual en el celular, en la tablet y en la
+// computadora, como el resto de la invitación.
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const titulo = "Código de vestimenta";
+const etiqueta = "Formal";
+const aclaracion =
+    "Evitar los tonos verdes y dorados, reservados para la quinceañera.";
+// Los colores de los que habla el aviso, uno por círculo
+const coloresReservados = ["#6f8a5b", "#c9a54e"];
+// ──────────────────────────────────────────────────────────────
+---
+
+<section id="codigo-vestimenta" class="seccion">
+    <div id="cv-bloque" class="bloque">
+        <!-- El ramo de flores, arriba de todo -->
+        <img
+            class="ramo"
+            src="/imagenes/centro.png"
+            alt=""
+            aria-hidden="true"
+            width="380"
+            height="197"
+        />
+
+        <p class="titulo font-charm">{titulo}</p>
+
+        <!--
+           La silueta se pinta con máscara y no se muestra tal cual: el
+           dibujo viene en lila y así toma el dorado de la invitación.
+        -->
+        <span
+            class="silueta"
+            style="--ic:url('/imagenes/codigo.png')"
+            role="img"
+            aria-label="Traje y vestido de fiesta"></span>
+
+        <p class="etiqueta font-charm">{etiqueta}</p>
+
+        <!-- La onda dorada, separando la etiqueta de la aclaración -->
+        <svg class="onda" viewBox="0 0 400 30" aria-hidden="true" focusable="false">
+            <g stroke="#c0993f" stroke-width="1.5" fill="none" stroke-linecap="round">
+                <path d="M26,15 C56,3 86,27 116,15 C140,5 160,10 172,15"></path>
+                <path d="M374,15 C344,3 314,27 284,15 C260,5 240,10 228,15"></path>
+            </g>
+            <g fill="#c0993f">
+                <path
+                    d="M200,2 C201.5,10 205,13.5 213,15 C205,16.5 201.5,20 200,28 C198.5,20 195,16.5 187,15 C195,13.5 198.5,10 200,2 Z"
+                ></path>
+                <circle cx="178" cy="15" r="2.2"></circle>
+                <circle cx="222" cy="15" r="2.2"></circle>
+            </g>
+        </svg>
+
+        <div class="aviso">
+            <p class="aclaracion font-charm">{aclaracion}</p>
+
+            <!-- Un círculo por cada color del que habla el aviso: así se
+                 ve de un vistazo cuáles son los colores reservados -->
+            <div class="muestras" aria-hidden="true">
+                {coloresReservados.map((c) => (
+                    <span class="muestra" style={"--verde:" + c} />
+                ))}
+            </div>
+        </div>
+    </div>
+
+    <!-- Las ramas de flores, a los costados del aviso -->
+    <img
+        class="flor flor-izq"
+        src="/imagenes/flor2.png"
+        alt=""
+        aria-hidden="true"
+        width="174"
+        height="630"
+    />
+    <img
+        class="flor flor-der"
+        src="/imagenes/flor2.png"
+        alt=""
+        aria-hidden="true"
+        width="174"
+        height="630"
+    />
+
+    <!-- Una mariposa en el aire, a un costado -->
+    <img
+        class="mariposa"
+        src="/imagenes/mariposa.png"
+        alt=""
+        aria-hidden="true"
+        width="170"
+        height="143"
+    />
+</section>
+
+<style>
+    /*
+       container-type deja medir todo contra el ancho de la columna y no
+       de la pantalla: 1cqw es el 1% de ese ancho.
+
+       Sin fondo propio: se ve el bosque que pone el layout.
+    */
+    .seccion {
+        position: relative;
+        width: 100%;
+        padding: 12cqw 0 14cqw;
+        overflow: hidden;
+        container-type: inline-size;
+        background-color: transparent;
+    }
+
+    .bloque {
+        position: relative;
+        z-index: 1;
+        width: 78%;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .ramo {
+        display: block;
+        width: 52%;
+        height: auto;
+        margin: 0 auto 7cqw;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    .titulo {
+        color: #c0993f;
+        font-size: 8.4cqw;
+        font-weight: 700;
+        line-height: 1.15;
+    }
+
+    /*
+       La silueta va pintada con máscara, igual que los iconos: el PNG es
+       una silueta lila y con la máscara toma el dorado exacto de la
+       invitación. Así no hace falta otra imagen.
+    */
+    .silueta {
+        display: block;
+        width: 42%;
+        aspect-ratio: 1080 / 735;
+        margin: 5cqw auto 4cqw;
+        background-color: #bf9a4b;
+        -webkit-mask-image: var(--ic);
+        mask-image: var(--ic);
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+    }
+
+    .etiqueta {
+        color: #4b5a43;
+        font-size: 7.4cqw;
+        font-weight: 700;
+        font-variant-caps: small-caps;
+        letter-spacing: 0.08em;
+        line-height: 1;
+    }
+
+    .onda {
+        display: block;
+        width: 68%;
+        height: auto;
+        margin: 3.4cqw auto;
+    }
+
+    /*
+       El aviso va en una tarjeta redondeada con hilo dorado. El velo va
+       como degradado y no como color: el modo oscuro forzado oscurece
+       colores pero respeta las imágenes.
+    */
+    .aviso {
+        margin: 0 auto;
+        padding: 5cqw 5cqw 5.5cqw;
+        border: 1px solid #d8bd85;
+        border-radius: 4cqw;
+        background-image: linear-gradient(
+            rgba(255, 255, 255, 0.82),
+            rgba(255, 255, 255, 0.72)
+        );
+    }
+
+    .aclaracion {
+        color: #4b5a43;
+        font-size: 5.2cqw;
+        line-height: 1.45;
+    }
+
+    /* El círculo con el verde reservado, debajo del aviso */
+    /* Los círculos uno al lado del otro, siempre en una sola fila */
+    .muestras {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-items: center;
+        gap: 3cqw;
+        margin-top: 4cqw;
+    }
+
+    .muestra {
+        display: block;
+        flex: none;
+        width: 11cqw;
+        height: 11cqw;
+        border: 1px solid #d8bd85;
+        border-radius: 50%;
+        background-image: linear-gradient(var(--verde), var(--verde));
+        box-shadow: 0 0.3cqw 0.9cqw rgba(90, 110, 70, 0.35);
+    }
+
+    /* ── Las ramas de flores ────────────────────────────────
+       A los costados del aviso, pegadas a los bordes; la de la derecha es
+       la misma imagen dada vuelta. */
+    .flor {
+        position: absolute;
+        bottom: 3%;
+        width: 16%;
+        height: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    .flor-izq {
+        left: -2%;
+    }
+
+    .flor-der {
+        right: -2%;
+        transform: scaleX(-1);
+    }
+
+    /* ── La mariposa ────────────────────────────────────────
+       En el aire, a un costado: no tapa nada. */
+    .mariposa {
+        position: absolute;
+        left: 4%;
+        top: 30%;
+        width: 11%;
+        height: auto;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+        transform: scaleX(-1);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        .mariposa {
+            animation: cv-volar 7s ease-in-out infinite;
+        }
+    }
+
+    @keyframes cv-volar {
+        0%,
+        100% {
+            transform: scaleX(-1) translate(0, 0) rotate(0deg);
+        }
+        50% {
+            transform: scaleX(-1) translate(1.4cqw, -2cqw) rotate(-7deg);
+        }
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const seccion = document.getElementById("codigo-vestimenta");
+        const bloque = document.getElementById("cv-bloque");
+        if (!seccion || !bloque) return;
+
+        // Sin animación si el visitante pidió menos movimiento: la
+        // sección ya está armada y visible en el HTML.
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+            return;
+
+        const renglones = Array.from(bloque.children);
+        const mariposa = seccion.querySelector(".mariposa");
+
+        /*
+           La entrada: todos los renglones arrancan al mismo tiempo pero
+           cada uno viene de un lado distinto —el primero baja desde
+           arriba y los demás entran alternando izquierda y derecha—, y
+           además crecen un poquito. Así el armado se nota, que es la
+           gracia, sin que la sección tarde en quedar lista.
+        */
+        gsap.set(renglones, {
+            opacity: 0,
+            x: (i) => (i === 0 ? "0%" : i % 2 === 1 ? "-14%" : "14%"),
+            y: (i) => (i === 0 ? "-45%" : "0%"),
+            scale: 0.92,
+        });
+        gsap.set(mariposa, { opacity: 0 });
+
+        const linea = gsap.timeline({
+            paused: true,
+            defaults: { ease: "power2.out" },
+        });
+
+        linea
+            .to(renglones, {
+                    opacity: 1,
+                    x: "0%",
+                    y: "0%",
+                    scale: 1,
+                    duration: 1.2,
+                    stagger: 0.09,
+                    ease: "power3.out",
+                })
+            .to(mariposa, { opacity: 1, duration: 1.1 }, 0.6);
+
+        ScrollTrigger.create({
+            trigger: seccion,
+            start: "top 80%",
+            onEnter: () => linea.restart(),
+            onLeaveBack: () => linea.pause(0),
+        });
+    });
+</script>

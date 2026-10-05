@@ -1,0 +1,715 @@
+---
+// src/components/Dedicatoria.astro
+// La dedicatoria: hoja blanca —ya sin el marco de fondo2— con las hojas
+// de eucalipto cayendo por los dos costados (florlateral.png, la misma
+// imagen espejada), la corona arriba, el nombre en el medio, las flores
+// y los hongos abajo, y las hadas y la mariposa volando entre los
+// renglones.
+//
+// Todo se mide en % del propio cuadro (container-type: inline-size), así
+// que el dibujo guarda la misma proporción en cualquier celular.
+//
+// Los separadores —el hilo dorado de abajo de la corona, el de ramas con
+// el corazón y el de las flechitas— van dibujados acá adentro como SVG:
+// no había imagen de ellos y así no pesan nada.
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const nombre = "Estefany";
+const parrafo1 =
+    "Hace 15 años nació una hermosa niña, enviada por Dios para ser criada y formada como el más grande tesoro.";
+const parrafo2 = "Hay momentos en la vida que imaginamos, soñamos y esperamos.";
+const parrafo3 = "Uno de esos momentos ha llegado.";
+// ──────────────────────────────────────────────────────────────
+---
+
+<!-- ── El separador entre el bosque y la dedicatoria ──────────
+     La guirnalda va a caballo de las dos secciones: tapa el encuentro y
+     hace de pasaje de una a la otra. Ocupa todo el ancho. -->
+<img
+    class="separador"
+    src="/imagenes/separador.png"
+    alt=""
+    aria-hidden="true"
+    width="1080"
+    height="274"
+/>
+
+<section id="dedicatoria" class="seccion">
+    <!-- ── El follaje de los costados: la misma imagen, la de la
+         derecha espejada ──────────────────────────────────────── -->
+    <img
+        class="hojas hojas-izq"
+        src="/imagenes/florlateral.png"
+        alt=""
+        aria-hidden="true"
+        width="941"
+        height="1671"
+    />
+    <img
+        class="hojas hojas-der"
+        src="/imagenes/florlateral.png"
+        alt=""
+        aria-hidden="true"
+        width="941"
+        height="1671"
+    />
+
+    <!-- ── Las flores y los hongos de abajo ──────────────────── -->
+    <img
+        class="flores"
+        src="/imagenes/floresizquieda.png"
+        alt=""
+        aria-hidden="true"
+        width="599"
+        height="639"
+    />
+    <img
+        class="hongos"
+        src="/imagenes/hongos.png"
+        alt=""
+        aria-hidden="true"
+        width="440"
+        height="501"
+    />
+
+    <!-- ── Las piezas que se repiten: la chispita y el corazón ── -->
+    <svg class="taller" aria-hidden="true" focusable="false">
+        <defs>
+            <path
+                id="de-chispa"
+                d="M12,0 C13,7 17,11 24,12 C17,13 13,17 12,24 C11,17 7,13 0,12 C7,11 11,7 12,0 Z"
+            ></path>
+            <path
+                id="de-corazon"
+                d="M12,5 C9,0 2,1 2,8 C2,14 8,17 12,22 C16,17 22,14 22,8 C22,1 15,0 12,5 Z"
+            ></path>
+        </defs>
+    </svg>
+
+    <!-- ── Las chispitas doradas ─────────────────────────────── -->
+    <div class="chispas" aria-hidden="true">
+        <svg class="chispa c1" viewBox="0 0 24 24"><use href="#de-chispa"></use></svg>
+        <svg class="chispa c2" viewBox="0 0 24 24"><use href="#de-chispa"></use></svg>
+        <svg class="chispa c3" viewBox="0 0 24 24"><use href="#de-chispa"></use></svg>
+        <svg class="chispa c4" viewBox="0 0 24 24"><use href="#de-chispa"></use></svg>
+        <svg class="chispa c5" viewBox="0 0 24 24"><use href="#de-chispa"></use></svg>
+        <svg class="chispa c6" viewBox="0 0 24 24"><use href="#de-chispa"></use></svg>
+    </div>
+
+    <!-- ── La corona ─────────────────────────────────────────── -->
+    <img
+        id="de-corona"
+        class="corona"
+        src="/imagenes/corona.png"
+        alt=""
+        aria-hidden="true"
+        width="922"
+        height="436"
+    />
+
+    <!-- ── Lo escrito ────────────────────────────────────────── -->
+    <div id="de-texto" class="texto">
+        <!-- separador de abajo de la corona: hilo dorado con corazón -->
+        <svg class="sep sep-hilo" viewBox="0 0 400 30" aria-hidden="true" focusable="false">
+            <g stroke="#c9a24a" stroke-width="1.5" fill="none" stroke-linecap="round">
+                <path d="M40,15 L178,15"></path>
+                <path d="M222,15 L360,15"></path>
+                <path d="M40,15 C30,15 22,9 26,5 C30,1 38,5 36,12"></path>
+                <path d="M360,15 C370,15 378,9 374,5 C370,1 362,5 364,12"></path>
+            </g>
+            <use href="#de-corazon" x="188" y="4" fill="#c9a24a"></use>
+        </svg>
+
+        <p class="parrafo font-charm">{parrafo1}</p>
+
+        <!-- el nombre, con un corazón dorado de cada lado -->
+        <div class="fila-nombre">
+            <svg class="ala-corazon" viewBox="0 0 120 40" aria-hidden="true" focusable="false">
+                <path
+                    d="M118,20 C96,20 74,26 54,22"
+                    stroke="#c9a24a"
+                    stroke-width="1.6"
+                    fill="none"
+                    stroke-linecap="round"></path>
+                <use href="#de-corazon" x="24" y="8" fill="#c9a24a"></use>
+            </svg>
+
+            <p class="nombre font-great-vibes">{nombre}</p>
+
+            <svg
+                class="ala-corazon ala-der"
+                viewBox="0 0 120 40"
+                aria-hidden="true"
+                focusable="false"
+            >
+                <path
+                    d="M118,20 C96,20 74,26 54,22"
+                    stroke="#c9a24a"
+                    stroke-width="1.6"
+                    fill="none"
+                    stroke-linecap="round"></path>
+                <use href="#de-corazon" x="24" y="8" fill="#c9a24a"></use>
+            </svg>
+        </div>
+
+        <!-- separador de ramas de olivo con el corazón en el medio -->
+        <svg class="sep sep-ramas" viewBox="0 0 400 44" aria-hidden="true" focusable="false">
+            <g>
+                <path
+                    d="M40,22 C80,16 130,15 172,20"
+                    stroke="#7d9470"
+                    stroke-width="1.6"
+                    fill="none"
+                    stroke-linecap="round"></path>
+                <g fill="#7d9470">
+                    <ellipse cx="56" cy="13" rx="9" ry="4.5" transform="rotate(-28 56 13)"></ellipse>
+                    <ellipse cx="78" cy="10" rx="9" ry="4.5" transform="rotate(-22 78 10)"></ellipse>
+                    <ellipse cx="100" cy="9" rx="9" ry="4.5" transform="rotate(-16 100 9)"></ellipse>
+                    <ellipse cx="122" cy="9" rx="9" ry="4.5" transform="rotate(-10 122 9)"></ellipse>
+                    <ellipse cx="144" cy="11" rx="8" ry="4.2" transform="rotate(-6 144 11)"></ellipse>
+                    <ellipse cx="58" cy="29" rx="9" ry="4.5" transform="rotate(26 58 29)"></ellipse>
+                    <ellipse cx="80" cy="28" rx="9" ry="4.5" transform="rotate(20 80 28)"></ellipse>
+                    <ellipse cx="102" cy="27" rx="9" ry="4.5" transform="rotate(14 102 27)"></ellipse>
+                    <ellipse cx="124" cy="28" rx="9" ry="4.5" transform="rotate(10 124 28)"></ellipse>
+                    <ellipse cx="146" cy="30" rx="8" ry="4.2" transform="rotate(6 146 30)"></ellipse>
+                </g>
+            </g>
+            <g transform="matrix(-1,0,0,1,400,0)">
+                <path
+                    d="M40,22 C80,16 130,15 172,20"
+                    stroke="#7d9470"
+                    stroke-width="1.6"
+                    fill="none"
+                    stroke-linecap="round"></path>
+                <g fill="#7d9470">
+                    <ellipse cx="56" cy="13" rx="9" ry="4.5" transform="rotate(-28 56 13)"></ellipse>
+                    <ellipse cx="78" cy="10" rx="9" ry="4.5" transform="rotate(-22 78 10)"></ellipse>
+                    <ellipse cx="100" cy="9" rx="9" ry="4.5" transform="rotate(-16 100 9)"></ellipse>
+                    <ellipse cx="122" cy="9" rx="9" ry="4.5" transform="rotate(-10 122 9)"></ellipse>
+                    <ellipse cx="144" cy="11" rx="8" ry="4.2" transform="rotate(-6 144 11)"></ellipse>
+                    <ellipse cx="58" cy="29" rx="9" ry="4.5" transform="rotate(26 58 29)"></ellipse>
+                    <ellipse cx="80" cy="28" rx="9" ry="4.5" transform="rotate(20 80 28)"></ellipse>
+                    <ellipse cx="102" cy="27" rx="9" ry="4.5" transform="rotate(14 102 27)"></ellipse>
+                    <ellipse cx="124" cy="28" rx="9" ry="4.5" transform="rotate(10 124 28)"></ellipse>
+                    <ellipse cx="146" cy="30" rx="8" ry="4.2" transform="rotate(6 146 30)"></ellipse>
+                </g>
+            </g>
+            <use href="#de-corazon" x="188" y="11" fill="#c9a24a"></use>
+        </svg>
+
+        <p class="parrafo font-charm">{parrafo2}</p>
+        <p class="parrafo font-charm">{parrafo3}</p>
+
+        <!-- separador de abajo: flechitas doradas y la ramita -->
+        <svg class="sep sep-flecha" viewBox="0 0 400 54" aria-hidden="true" focusable="false">
+            <g stroke="#c9a24a" stroke-width="1.5" fill="none" stroke-linecap="round">
+                <path d="M46,15 L176,15"></path>
+                <path d="M224,15 L354,15"></path>
+                <path d="M46,15 L58,10 M46,15 L58,20"></path>
+                <path d="M354,15 L342,10 M354,15 L342,20"></path>
+                <path d="M160,15 C166,9 174,9 178,13"></path>
+                <path d="M240,15 C234,9 226,9 222,13"></path>
+            </g>
+            <use href="#de-corazon" x="188" y="4" fill="#c9a24a"></use>
+            <!-- la ramita de hojas de abajo -->
+            <g fill="#7d9470">
+                <ellipse cx="200" cy="38" rx="5" ry="10"></ellipse>
+                <ellipse cx="186" cy="42" rx="9" ry="4.5" transform="rotate(-28 186 42)"></ellipse>
+                <ellipse cx="214" cy="42" rx="9" ry="4.5" transform="rotate(28 214 42)"></ellipse>
+                <ellipse cx="192" cy="50" rx="7" ry="3.6" transform="rotate(-18 192 50)"></ellipse>
+                <ellipse cx="208" cy="50" rx="7" ry="3.6" transform="rotate(18 208 50)"></ellipse>
+            </g>
+        </svg>
+    </div>
+
+    <!-- ── Las hadas y la mariposa, volando ──────────────────── -->
+    <img
+        id="de-hada-izq"
+        class="hada hada-izq"
+        src="/imagenes/ada.png"
+        alt=""
+        aria-hidden="true"
+        width="1390"
+        height="1132"
+    />
+    <img
+        id="de-hada-der"
+        class="hada hada-der"
+        src="/imagenes/ada.png"
+        alt=""
+        aria-hidden="true"
+        width="1390"
+        height="1132"
+    />
+    <img
+        id="de-mariposa"
+        class="mariposa"
+        src="/imagenes/mariposa.png"
+        alt=""
+        aria-hidden="true"
+        width="170"
+        height="143"
+    />
+</section>
+
+<style>
+    /*
+       La hoja tiene la misma proporción que el diseño (941x1672), así lo
+       que se acomoda adentro no se corre de lugar al cambiar el ancho del
+       celular.
+
+       La sección no lleva fondo propio: deja ver el fondo principal que
+       pone el layout.
+
+       La sección arranca donde termina la de arriba: ya no lleva la
+       guirnalda que tapaba la juntura.
+    */
+    /*
+       La guirnalda: ancho completo y montada sobre la juntura. Se sube
+       con el margen de arriba para quedar medio sobre el bosque y medio
+       sobre esta sección, y el z-index la deja por encima de las dos.
+    */
+    .separador {
+        position: relative;
+        z-index: 2;
+        display: block;
+        width: 100%;
+        height: auto;
+        margin-top: -12%;
+        margin-bottom: -6%;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    .seccion {
+        position: relative;
+        width: 100%;
+        /* se mete debajo de la guirnalda: así no queda franja entre las
+           dos secciones */
+        margin-top: -13%;
+        aspect-ratio: 941 / 1672;
+        overflow: hidden;
+        container-type: inline-size;
+        /* sin fondo propio: se ve el bosque que pone el layout */
+        background-color: transparent;
+    }
+
+    /* ── El follaje de los costados ─────────────────────────── */
+    .hojas {
+        position: absolute;
+        top: -1%;
+        width: 46%;
+        height: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    .hojas-izq {
+        /* corrida hacia afuera para dejarle aire al texto */
+        left: -4%;
+    }
+
+    .hojas-der {
+        /* la misma imagen dada vuelta, corrida hacia el otro lado */
+        left: auto;
+        right: -4%;
+        transform: scaleX(-1);
+    }
+
+    /* ── Abajo: las flores y los hongos ─────────────────────── */
+    .flores {
+        position: absolute;
+        left: -9%;
+        bottom: 3.5%;
+        width: 40%;
+        height: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    .hongos {
+        position: absolute;
+        right: -7%;
+        bottom: -1%;
+        width: 34%;
+        height: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    /* ── La corona ──────────────────────────────────────────── */
+    .corona {
+        position: absolute;
+        left: 49%;
+        top: 11.5%;
+        width: 31%;
+        height: auto;
+        transform: translateX(-50%);
+    }
+
+    /* El taller no se ve: solo guarda las piezas que se repiten */
+    .taller {
+        position: absolute;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+    }
+
+    /* ── Las chispitas ──────────────────────────────────────── */
+    .chispas {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+
+    .chispa {
+        position: absolute;
+        width: 3.4cqw;
+        height: auto;
+        fill: #dbb35c;
+    }
+
+    .c1 {
+        left: 27%;
+        top: 18.4%;
+    }
+
+    .c2 {
+        left: 69%;
+        top: 18.4%;
+        width: 2.6cqw;
+    }
+
+    .c3 {
+        left: 81%;
+        top: 28.5%;
+        width: 4.2cqw;
+    }
+
+    .c4 {
+        left: 17%;
+        top: 40.5%;
+        width: 4.6cqw;
+    }
+
+    .c5 {
+        left: 69%;
+        top: 41.5%;
+        width: 2.8cqw;
+    }
+
+    .c6 {
+        left: 71%;
+        top: 75.5%;
+        width: 3cqw;
+    }
+
+    /* ── Lo escrito ─────────────────────────────────────────
+       Una sola columna centrada: los separadores son parte del texto y
+       van en el mismo orden que en el diseño. */
+    .texto {
+        position: absolute;
+        left: 50%;
+        top: 21.5%;
+        width: 56%;
+        transform: translateX(-50%);
+        text-align: center;
+    }
+
+    /* En Charm, que es la letra con la que va toda la invitación */
+    .parrafo {
+        color: #4a6551;
+        font-size: 6cqw;
+        line-height: 1.55;
+    }
+
+    /* ── Los separadores ────────────────────────────────────── */
+    .sep {
+        display: block;
+        height: auto;
+        margin: 0 auto;
+    }
+
+    .sep-hilo {
+        width: 74%;
+        margin-bottom: 3.4cqw;
+    }
+
+    .sep-ramas {
+        width: 64%;
+        margin: 3.6cqw auto 4.6cqw;
+    }
+
+    .sep-flecha {
+        width: 62%;
+        margin-top: 4cqw;
+    }
+
+    /* ── El nombre ──────────────────────────────────────────
+       Los dos corazones dorados van al costado, en la misma línea. Sin
+       mayúsculas forzadas ni espaciado entre letras: esta cursiva no los
+       tolera. */
+    .fila-nombre {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 3cqw;
+    }
+
+    .nombre {
+        color: #c9962e;
+        font-size: 17cqw;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .ala-corazon {
+        width: 11cqw;
+        height: auto;
+        flex: none;
+    }
+
+    .ala-der {
+        transform: scaleX(-1);
+    }
+
+    /* ── Las hadas y la mariposa ────────────────────────────
+       El PNG del hada trae aire transparente alrededor, por eso la
+       medida es más grande que el hada que se ve. */
+    .hada {
+        position: absolute;
+        height: auto;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+        filter: drop-shadow(0 0 0.8cqw rgba(226, 178, 74, 0.4));
+    }
+
+    .hada-izq {
+        left: 3%;
+        top: 16.5%;
+        width: 25%;
+    }
+
+    /* La de abajo es la misma, dada vuelta: así mira hacia el texto */
+    .hada-der {
+        left: 68%;
+        top: 59.5%;
+        width: 22%;
+        transform: scaleX(-1);
+    }
+
+    .mariposa {
+        position: absolute;
+        left: 75.5%;
+        top: 38.5%;
+        width: 10%;
+        height: auto;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    /*
+       Movimiento de fondo: las hadas y la mariposa flotan, cada una con
+       su tiempo, y las chispitas titilan. Si el visitante pidió menos
+       movimiento, se quedan quietas.
+    */
+    @media (prefers-reduced-motion: no-preference) {
+        .hada-izq {
+            animation: de-volar-izq 7.5s ease-in-out infinite;
+        }
+
+        .hada-der {
+            animation: de-volar-der 9s ease-in-out infinite;
+        }
+
+        .mariposa {
+            animation: de-volar-mariposa 6.5s ease-in-out infinite;
+        }
+
+        .chispa {
+            animation: de-titilar 4.5s ease-in-out infinite;
+        }
+
+        .c2 {
+            animation-delay: 1.1s;
+        }
+
+        .c3 {
+            animation-delay: 2.3s;
+        }
+
+        .c4 {
+            animation-delay: 0.6s;
+        }
+
+        .c5 {
+            animation-delay: 3s;
+        }
+
+        .c6 {
+            animation-delay: 1.8s;
+        }
+    }
+
+    @keyframes de-volar-izq {
+        0%,
+        100% {
+            transform: translate(0, 0) rotate(0deg);
+        }
+        30% {
+            transform: translate(1.4cqw, -2cqw) rotate(-3deg);
+        }
+        65% {
+            transform: translate(-1cqw, -3.2cqw) rotate(2deg);
+        }
+    }
+
+    @keyframes de-volar-der {
+        0%,
+        100% {
+            transform: scaleX(-1) translate(0, 0) rotate(0deg);
+        }
+        35% {
+            transform: scaleX(-1) translate(1.2cqw, -2.6cqw) rotate(3deg);
+        }
+        70% {
+            transform: scaleX(-1) translate(-1.6cqw, -1.4cqw) rotate(-2deg);
+        }
+    }
+
+    @keyframes de-volar-mariposa {
+        0%,
+        100% {
+            transform: translate(0, 0) rotate(0deg);
+        }
+        40% {
+            transform: translate(-1.6cqw, -2.2cqw) rotate(-7deg);
+        }
+        70% {
+            transform: translate(1.2cqw, -1cqw) rotate(5deg);
+        }
+    }
+
+    @keyframes de-titilar {
+        0%,
+        100% {
+            opacity: 0.35;
+            transform: scale(0.85);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1.15);
+        }
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const seccion = document.getElementById("dedicatoria");
+        const corona = document.getElementById("de-corona");
+        const texto = document.getElementById("de-texto");
+        const volando = [
+            document.getElementById("de-hada-izq"),
+            document.getElementById("de-hada-der"),
+            document.getElementById("de-mariposa"),
+        ];
+        if (!seccion || !texto) return;
+
+        // Sin animación si el visitante pidió menos movimiento: la
+        // sección ya está armada y visible en el HTML.
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+            return;
+
+        const renglones = Array.from(texto.children);
+
+        /*
+           A las hadas y a la mariposa solo se les toca la opacidad: su
+           vuelo es una animación de CSS que usa transform, y si GSAP les
+           tocara la posición, las dos animaciones se pisarían.
+        */
+        /*
+           El follaje de los costados solo aparece, no se mueve: la hoja
+           de la derecha está espejada desde el CSS y, en cuanto GSAP le
+           escribe el transform para correrla, le borra el espejo y la
+           imagen se da vuelta sola.
+
+           Las flores y los hongos no tienen ese problema, así que esos sí
+           entran desde su costado.
+        */
+        const hojas = seccion.querySelectorAll(".hojas-izq, .hojas-der");
+        const bosque = seccion.querySelectorAll(".flores, .hongos");
+
+        gsap.set(hojas, { opacity: 0 });
+        gsap.set(bosque, {
+            opacity: 0,
+            x: (i) => (i === 0 ? "-14%" : "14%"),
+            y: "14%",
+        });
+        gsap.set(corona, { opacity: 0, y: "-25%", scale: 0.86 });
+        /*
+           La entrada: todos los renglones arrancan al mismo tiempo pero
+           cada uno viene de un lado distinto —el primero baja desde
+           arriba y los demás entran alternando izquierda y derecha—, y
+           además crecen un poquito. Así el armado se nota, que es la
+           gracia, sin que la sección tarde en quedar lista.
+        */
+        gsap.set(renglones, {
+            opacity: 0,
+            x: (i) => (i === 0 ? "0%" : i % 2 === 1 ? "-14%" : "14%"),
+            y: (i) => (i === 0 ? "-45%" : "0%"),
+            scale: 0.92,
+        });
+        gsap.set(volando, { opacity: 0 });
+
+        const linea = gsap.timeline({
+            paused: true,
+            defaults: { ease: "power2.out" },
+        });
+
+        linea
+            .to(hojas, { opacity: 1, duration: 1.5, stagger: 0.12 })
+            .to(
+                bosque,
+                {
+                    opacity: 1,
+                    x: "0%",
+                    y: "0%",
+                    duration: 1.5,
+                    stagger: 0.12,
+                    ease: "power3.out",
+                },
+                0,
+            )
+            .to(
+                corona,
+                { opacity: 1, y: "0%", scale: 1, duration: 1.2, ease: "back.out(1.5)" },
+                0.1,
+            )
+            .to(renglones, {
+                    opacity: 1,
+                    x: "0%",
+                    y: "0%",
+                    scale: 1,
+                    duration: 1.2,
+                    stagger: 0.09,
+                    ease: "power3.out",
+                }, 0.3)
+            .to(volando, { opacity: 1, duration: 1.3, stagger: 0.3 }, 0.8);
+
+        // Entra con el scroll, como las demás secciones
+        ScrollTrigger.create({
+            trigger: seccion,
+            start: "top 75%",
+            onEnter: () => linea.restart(),
+            onLeaveBack: () => linea.pause(0),
+        });
+    });
+</script>

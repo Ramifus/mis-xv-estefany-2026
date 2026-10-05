@@ -1,0 +1,276 @@
+---
+// src/components/Itinerario.astro
+// El itinerario de la noche, con la temática del bosque: el ramo arriba,
+// el título, la onda dorada y la lista de momentos sobre un papel velado
+// con hilo dorado. Cada momento lleva su icono, la hora y el nombre.
+//
+// Sigue el mismo lenguaje que Código de vestimenta: sin tarjeta grande,
+// el texto se apoya sobre el bosque del layout.
+//
+// Las medidas van en cqw —% del ancho de la columna— y no en
+// breakpoints: se ve igual en el celular, en la tablet y en la
+// computadora, como el resto de la invitación.
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const titulo = "Itinerario";
+// Los iconos salen de /public/iconos/ y se pintan de dorado con máscara
+const momentos = [
+    { hora: "19:30", nombre: "Ingreso de invitados", icono: "recepcion.png" },
+    { hora: "21:30", nombre: "Entrada especial", icono: "entrada.png" },
+    { hora: "22:00", nombre: "Baile principal", icono: "musica.png" },
+    { hora: "22:30", nombre: "Baile sorpresa", icono: "musica.png" },
+    { hora: "23:00", nombre: "Cena", icono: "cena.png" },
+    { hora: "23:30", nombre: "Torta", icono: "torta.png" },
+    { hora: "00:00", nombre: "Baile", icono: "musica.png" },
+];
+// ──────────────────────────────────────────────────────────────
+---
+
+<section id="itinerario" class="seccion">
+    <div id="it-bloque" class="bloque">
+        <!-- El ramo de flores, arriba de todo -->
+        <img
+            class="ramo"
+            src="/imagenes/centro.png"
+            alt=""
+            aria-hidden="true"
+            width="380"
+            height="197"
+        />
+
+        <p class="titulo font-charm">{titulo}</p>
+
+        <!-- La onda dorada, separando el título de la lista -->
+        <svg class="onda" viewBox="0 0 400 30" aria-hidden="true" focusable="false">
+            <g stroke="#c0993f" stroke-width="1.5" fill="none" stroke-linecap="round">
+                <path d="M26,15 C56,3 86,27 116,15 C140,5 160,10 172,15"></path>
+                <path d="M374,15 C344,3 314,27 284,15 C260,5 240,10 228,15"></path>
+            </g>
+            <g fill="#c0993f">
+                <path
+                    d="M200,2 C201.5,10 205,13.5 213,15 C205,16.5 201.5,20 200,28 C198.5,20 195,16.5 187,15 C195,13.5 198.5,10 200,2 Z"
+                ></path>
+                <circle cx="178" cy="15" r="2.2"></circle>
+                <circle cx="222" cy="15" r="2.2"></circle>
+            </g>
+        </svg>
+
+        <ul class="lista">
+            {
+                momentos.map((m) => (
+                    <li class="momento">
+                        <span
+                            class="icono icono-dorado"
+                            style={`--ic:url('/iconos/${m.icono}')`}
+                            aria-hidden="true"
+                        />
+                        <span class="hora font-charm">{m.hora}</span>
+                        <span class="nombre font-charm">{m.nombre}</span>
+                    </li>
+                ))
+            }
+        </ul>
+    </div>
+
+    <!-- Las ramas de flores, a los costados de la lista -->
+    <img
+        class="flor flor-izq"
+        src="/imagenes/flor2.png"
+        alt=""
+        aria-hidden="true"
+        width="174"
+        height="630"
+    />
+    <img
+        class="flor flor-der"
+        src="/imagenes/flor2.png"
+        alt=""
+        aria-hidden="true"
+        width="174"
+        height="630"
+    />
+</section>
+
+<style>
+    /*
+       container-type deja medir todo contra el ancho de la columna y no
+       de la pantalla: 1cqw es el 1% de ese ancho.
+
+       Sin fondo propio: se ve el bosque que pone el layout.
+    */
+    .seccion {
+        position: relative;
+        width: 100%;
+        padding: 12cqw 0 14cqw;
+        overflow: hidden;
+        container-type: inline-size;
+        background-color: transparent;
+    }
+
+    .bloque {
+        position: relative;
+        z-index: 1;
+        width: 78%;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .ramo {
+        display: block;
+        width: 52%;
+        height: auto;
+        margin: 0 auto 7cqw;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    .titulo {
+        color: #c0993f;
+        font-size: 8.4cqw;
+        font-weight: 700;
+        line-height: 1.15;
+    }
+
+    .onda {
+        display: block;
+        width: 68%;
+        height: auto;
+        margin: 3.4cqw auto;
+    }
+
+    /*
+       La lista va en el mismo papel velado con hilo dorado que el aviso
+       de vestimenta. El velo va como degradado y no como color: el modo
+       oscuro forzado oscurece colores pero respeta las imágenes.
+    */
+    .lista {
+        margin: 0 auto;
+        padding: 4cqw 5cqw;
+        list-style: none;
+        border: 1px solid #d8bd85;
+        border-radius: 4cqw;
+        background-image: linear-gradient(
+            rgba(255, 255, 255, 0.82),
+            rgba(255, 255, 255, 0.72)
+        );
+    }
+
+    .momento {
+        display: grid;
+        grid-template-columns: 8cqw 13cqw 1fr;
+        align-items: center;
+        column-gap: 3cqw;
+        padding: 2.4cqw 0;
+        text-align: left;
+    }
+
+    .momento + .momento {
+        border-top: 1px solid rgba(216, 189, 133, 0.55);
+    }
+
+    /* El icono se pinta con máscara (la clase .icono de global.css) */
+    .icono {
+        width: 8cqw;
+        height: 8cqw;
+    }
+    .icono-dorado {
+        background-color: #c0993f;
+    }
+
+    .hora {
+        color: #c0993f;
+        font-size: 5.2cqw;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .nombre {
+        color: #4b5a43;
+        font-size: 5.2cqw;
+        line-height: 1.25;
+    }
+
+    /* ── Las ramas de flores ────────────────────────────────
+       A los costados de la lista, pegadas a los bordes; la de la derecha
+       es la misma imagen dada vuelta. */
+    .flor {
+        position: absolute;
+        bottom: 3%;
+        width: 16%;
+        height: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    .flor-izq {
+        left: -2%;
+    }
+
+    .flor-der {
+        right: -2%;
+        transform: scaleX(-1);
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const seccion = document.getElementById("itinerario");
+        const bloque = document.getElementById("it-bloque");
+        if (!seccion || !bloque) return;
+
+        // Sin animación si el visitante pidió menos movimiento: la
+        // sección ya está armada y visible en el HTML.
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+            return;
+
+        const encabezado = Array.from(bloque.children).filter(
+            (el) => !el.classList.contains("lista"),
+        );
+        const lista = bloque.querySelector(".lista");
+        const momentos = Array.from(bloque.querySelectorAll(".momento"));
+
+        /*
+           La misma entrada que Código de vestimenta: el ramo baja desde
+           arriba y los demás renglones entran alternando de los costados.
+           Después el papel aparece y los momentos van cayendo de a uno.
+        */
+        gsap.set(encabezado, {
+            opacity: 0,
+            x: (i) => (i === 0 ? "0%" : i % 2 === 1 ? "-14%" : "14%"),
+            y: (i) => (i === 0 ? "-45%" : "0%"),
+            scale: 0.92,
+        });
+        gsap.set(lista, { opacity: 0, scale: 0.96 });
+        gsap.set(momentos, { opacity: 0, y: "40%" });
+
+        const linea = gsap.timeline({
+            paused: true,
+            defaults: { ease: "power2.out" },
+        });
+
+        linea
+            .to(encabezado, {
+                opacity: 1,
+                x: "0%",
+                y: "0%",
+                scale: 1,
+                duration: 1.2,
+                stagger: 0.09,
+                ease: "power3.out",
+            })
+            .to(lista, { opacity: 1, scale: 1, duration: 0.9 }, 0.5)
+            .to(momentos, { opacity: 1, y: "0%", duration: 0.7, stagger: 0.1 }, 0.8);
+
+        ScrollTrigger.create({
+            trigger: seccion,
+            start: "top 80%",
+            onEnter: () => linea.restart(),
+            onLeaveBack: () => linea.pause(0),
+        });
+    });
+</script>

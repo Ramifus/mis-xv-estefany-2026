@@ -1,0 +1,731 @@
+---
+// src/components/NombresFlores.astro
+// El anuncio de los XV, a pantalla completa: el bosque con el arco de
+// piedra de fondo, las luces colgadas arriba, la corona sobre el arco,
+// "Mis 15 Años" en el hueco del arco y la quinceañera parada abajo a la
+// izquierda, entrando por el costado.
+//
+// Todo se mide en % de la propia sección (container-type: inline-size),
+// así que el cuadro guarda la misma proporción en cualquier celular: es
+// el mismo dibujo, más chico o más grande.
+//
+// La corona y las mariposas son imágenes sueltas (corona.png y
+// mariposa.png), puestas encima del fondo.
+
+// ── DATOS EDITABLES ───────────────────────────────────────────
+const palabra1 = "Mis";
+const numero = "15";
+const palabra2 = "Años";
+const altQuince = "La quinceañera de espaldas, con vestido verde bordado";
+// ──────────────────────────────────────────────────────────────
+---
+
+<section id="sobre-novios" class="seccion">
+    <!-- ── El bosque ────────────────────────────────────────── -->
+    <img
+        id="nf-fondo"
+        class="fondo"
+        src="/imagenes/fondobosque.webp"
+        alt=""
+        aria-hidden="true"
+        width="1080"
+        height="1920"
+    />
+
+    <!-- ── Las luces colgadas, pegadas al borde de arriba ─────
+         Van dos veces la misma guirnalda: la de abajo siempre prendida y
+         la de arriba encendida de más, que sube y baja de a poco. Así
+         los focos titilan sin que haga falta otra imagen. -->
+    <div id="nf-luces" class="guirnalda">
+        <img
+            class="luces"
+            src="/imagenes/luces.webp"
+            alt=""
+            aria-hidden="true"
+            width="1080"
+            height="1591"
+        />
+        <img
+            class="luces luces-brillo"
+            src="/imagenes/luces.webp"
+            alt=""
+            aria-hidden="true"
+            width="1080"
+            height="1591"
+        />
+    </div>
+
+    <!-- ── La corona, sobre el hueco del arco ───────────────── -->
+    <img
+        id="nf-corona"
+        class="corona"
+        src="/imagenes/corona.png"
+        alt=""
+        aria-hidden="true"
+        width="922"
+        height="436"
+    />
+
+    <!-- ── El anuncio ───────────────────────────────────────── -->
+    <div id="nf-titulo" class="titulo">
+        <p class="mis font-great-vibes">{palabra1}</p>
+        <p class="numero font-dancing">{numero}</p>
+        <p class="anios font-great-vibes">{palabra2}</p>
+    </div>
+
+    <!-- ── Las mariposas ───────────────────────────────────── -->
+    <img
+        id="nf-mariposa-izq"
+        class="mariposa mariposa-izq"
+        src="/imagenes/mariposa.png"
+        alt=""
+        aria-hidden="true"
+    />
+
+    <img
+        id="nf-mariposa-der"
+        class="mariposa mariposa-der"
+        src="/imagenes/mariposa.png"
+        alt=""
+        aria-hidden="true"
+    />
+
+    <!-- ── El botón de la música, debajo del "Mis 15 Años" ────
+         Empieza apagado a propósito: los navegadores no dejan que el
+         sonido arranque solo, y una invitación que suena sin aviso es lo
+         que hace cerrar la pestaña. -->
+    <button
+        id="nf-musica"
+        class="musica"
+        type="button"
+        aria-label="Poner la música"
+        aria-pressed="false"
+    >
+        <!-- Las barritas de los costados: suben y bajan como la melodía,
+             despacio, solo mientras suena -->
+        <span class="ondas ondas-izq" aria-hidden="true">
+            <i></i><i></i><i></i>
+        </span>
+        <span class="ondas ondas-der" aria-hidden="true">
+            <i></i><i></i><i></i>
+        </span>
+
+        <svg class="icono" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+            <!-- el triángulo de reproducir -->
+            <path class="play" d="M15,11 L29,20 L15,29 Z"></path>
+            <!-- las dos barras de pausa, que aparecen cuando suena -->
+            <g class="pausa">
+                <rect x="14" y="11" width="4.5" height="18" rx="1.6"></rect>
+                <rect x="22" y="11" width="4.5" height="18" rx="1.6"></rect>
+            </g>
+        </svg>
+    </button>
+
+    <audio id="nf-audio" src="/musica/melodia2.mp3" loop preload="none"></audio>
+
+    <!-- ── La quinceañera ──────────────────────────────────── -->
+    <img
+        id="nf-quince"
+        class="quince"
+        src="/imagenes/quince.webp"
+        alt={altQuince}
+        width="865"
+        height="881"
+    />
+</section>
+
+<style>
+    /*
+       La sección es un cuadro con la misma proporción que el fondo
+       (1080x1920): así lo que se acomoda adentro no se corre de lugar al
+       cambiar el ancho del celular.
+
+       container-type deja medir todo contra el ancho de la sección y no
+       del viewport, y el color de respaldo va como degradado y no como
+       color: el modo oscuro forzado oscurece colores pero respeta las
+       imágenes.
+    */
+    .seccion {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1080 / 1920;
+        overflow: hidden;
+        container-type: inline-size;
+        background-image: linear-gradient(#e8eacb, #e8eacb);
+    }
+
+    .fondo {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        /* el zoom de entrada crece desde el centro */
+        transform-origin: center center;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    /* Las luces cuelgan del borde de arriba; el resto del dibujo es
+       transparente y cae sobre el follaje sin taparlo */
+    .guirnalda {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        pointer-events: none;
+    }
+
+    .luces {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    /* La primera copia queda en el flujo para que el bloque tenga alto;
+       la segunda se le monta encima */
+    .guirnalda .luces:first-child {
+        position: relative;
+    }
+
+    /*
+       La copia de arriba es la misma guirnalda con más luz. Va en screen
+       —suma luz, no tapa— y su opacidad sube y baja con tiempos
+       desparejos: así los focos parecen titilar de a poco y no
+       prenderse todos juntos como un cartel.
+    */
+    .luces-brillo {
+        opacity: 0.1;
+        mix-blend-mode: screen;
+        filter: brightness(1.45) saturate(1.15)
+            drop-shadow(0 0 0.9cqw rgba(255, 199, 112, 0.95));
+    }
+
+    /* ── La corona ───────────────────────────────────────────
+       Va centrada sobre el hueco del arco, no sobre la sección: el arco
+       del dibujo está un poco corrido a la derecha. */
+    .corona {
+        position: absolute;
+        left: 50.7%;
+        top: 38.3%;
+        width: 22%;
+        height: auto;
+        transform: translateX(-50%);
+        filter: drop-shadow(0 0.25cqw 0.5cqw rgba(140, 90, 20, 0.35));
+    }
+
+    /* ── El anuncio ──────────────────────────────────────────
+       Los tres renglones bajan en escalera —Mis arriba a la izquierda,
+       15 en el medio, Años abajo a la derecha— así que cada uno va
+       colocado por separado, en % del cuadro.
+
+       Sin mayúsculas forzadas ni espaciado entre letras: estas cursivas
+       no los toleran. */
+    .titulo {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+
+    .titulo p {
+        position: absolute;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .mis,
+    .numero,
+    .anios {
+        color: #33641f;
+        /* el resplandor claro que las despega del fondo del arco */
+        text-shadow:
+            0 0 1cqw rgba(255, 255, 255, 0.9),
+            0 0 2.6cqw rgba(255, 255, 255, 0.6),
+            0 0.2cqw 0.35cqw rgba(30, 60, 25, 0.25);
+    }
+
+    .mis {
+        left: 24%;
+        top: 48.7%;
+        font-size: 9cqw;
+    }
+
+    .anios {
+        left: 58.4%;
+        top: 62.8%;
+        font-size: 9.8cqw;
+    }
+
+    /*
+       El número es el que manda en la composición: va en el medio del
+       arco, más grande que las palabras y en crema con resplandor
+       dorado, como si tuviera luz propia.
+    */
+    .numero {
+        left: 50.8%;
+        top: 51.3%;
+        transform: translateX(-50%);
+        font-size: 19.3cqw;
+    }
+
+    /* ── Las mariposas ──────────────────────────────────────── */
+    .mariposa {
+        position: absolute;
+        height: auto;
+        filter: drop-shadow(0 0.3cqw 0.5cqw rgba(120, 80, 20, 0.3));
+    }
+
+    .mariposa-izq {
+        left: 14.7%;
+        top: 33%;
+        /* espejada: mira hacia afuera, para el lado contrario que la otra */
+        transform: rotate(-8deg) scaleX(-1);
+        width: 15.8%;
+    }
+
+    .mariposa-der {
+        left: 72.6%;
+        top: 49%;
+        width: 15.8%;
+        transform: rotate(10deg);
+    }
+
+    /* ── El botón de la música ──────────────────────────────
+       Va centrado debajo del "Mis 15 Años". El dorado va como degradado
+       y no como color: el modo oscuro forzado oscurece colores pero
+       respeta las imágenes. */
+    .musica {
+        position: absolute;
+        left: 50.7%;
+        top: 70.5%;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 13cqw;
+        height: 13cqw;
+        padding: 0;
+        border: 1px solid #d8bd85;
+        border-radius: 50%;
+        background-image: linear-gradient(#5d7550, #43543b);
+        transform: translateX(-50%);
+        cursor: pointer;
+        box-shadow: 0 0.4cqw 1.2cqw rgba(50, 70, 40, 0.4);
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .musica .icono {
+        width: 46%;
+        height: 46%;
+        fill: #f6efdc;
+    }
+
+    /* ── Las barritas de los costados ───────────────────────
+       Quietas y bajitas mientras la música está apagada; cuando suena,
+       suben y bajan sueltas, cada una a su tiempo. */
+    .ondas {
+        position: absolute;
+        top: 50%;
+        display: flex;
+        align-items: center;
+        gap: 0.8cqw;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+
+    .ondas-izq {
+        right: 100%;
+        margin-right: 2cqw;
+        flex-direction: row-reverse;
+    }
+
+    .ondas-der {
+        left: 100%;
+        margin-left: 2cqw;
+    }
+
+    /* Van como degradado y no como color: el modo oscuro forzado
+       oscurece colores pero respeta las imágenes */
+    .ondas i {
+        display: block;
+        width: 0.9cqw;
+        height: 3.4cqw;
+        border-radius: 999px;
+        background-image: linear-gradient(#6d8a5c, #4b5a43);
+        opacity: 0.55;
+        transform: scaleY(0.45);
+    }
+
+    /* El triángulo y las barras se turnan: solo se ve el que
+       corresponde al estado del botón */
+    .musica .pausa {
+        display: none;
+    }
+
+    .musica.sonando .play {
+        display: none;
+    }
+
+    .musica.sonando .pausa {
+        display: block;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        .musica {
+            animation: nf-latir-boton 2.8s ease-in-out infinite;
+        }
+
+        .musica.sonando {
+            animation: none;
+        }
+
+        /* Cada barrita con su tiempo: así la melodía no marcha a paso
+           militar */
+        .musica.sonando .ondas i {
+            animation: nf-sonido 1.6s ease-in-out infinite;
+        }
+
+        .musica.sonando .ondas i:nth-child(2) {
+            animation-duration: 2.1s;
+            animation-delay: 0.25s;
+        }
+
+        .musica.sonando .ondas i:nth-child(3) {
+            animation-duration: 1.9s;
+            animation-delay: 0.5s;
+        }
+    }
+
+    @keyframes nf-latir-boton {
+        0%,
+        100% {
+            transform: translateX(-50%) scale(1);
+            box-shadow: 0 0.4cqw 1.2cqw rgba(120, 90, 30, 0.35);
+        }
+        50% {
+            transform: translateX(-50%) scale(1.08);
+            box-shadow: 0 0.5cqw 2cqw rgba(190, 150, 60, 0.55);
+        }
+    }
+
+    @keyframes nf-sonido {
+        0%,
+        100% {
+            opacity: 0.5;
+            transform: scaleY(0.4);
+        }
+        50% {
+            opacity: 0.95;
+            transform: scaleY(1);
+        }
+    }
+
+    /* ── La quinceañera ─────────────────────────────────────
+       El vuelo del vestido se va de la hoja por la izquierda y por
+       abajo, igual que en el diseño. */
+    .quince {
+        position: absolute;
+        left: -16%;
+        bottom: -1.6%;
+        width: 78%;
+        height: auto;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+
+    /*
+       Movimiento de fondo: las mariposas flotan y el número late
+       despacio. Es un respiro, no un efecto; si el visitante pidió menos
+       movimiento, se quedan quietos.
+    */
+    @media (prefers-reduced-motion: no-preference) {
+        .mariposa-izq {
+            animation: nf-flotar 7s ease-in-out infinite;
+        }
+
+        .mariposa-der {
+            animation: nf-flotar-der 8.5s ease-in-out infinite;
+        }
+
+        .numero {
+            animation: nf-latir 6s ease-in-out infinite;
+        }
+
+        .luces-brillo {
+            animation: nf-titilar 9s ease-in-out infinite;
+        }
+    }
+
+    @keyframes nf-flotar {
+        0%,
+        100% {
+            transform: rotate(-8deg) translate(0, 0) scaleX(-1);
+        }
+        50% {
+            transform: rotate(-4deg) translate(1.2cqw, -1.6cqw) scaleX(-1);
+        }
+    }
+
+    @keyframes nf-flotar-der {
+        0%,
+        100% {
+            transform: rotate(10deg) translate(0, 0);
+        }
+        50% {
+            transform: rotate(6deg) translate(-1.4cqw, -1.2cqw);
+        }
+    }
+
+    @keyframes nf-titilar {
+        0% {
+            opacity: 0.1;
+        }
+        14% {
+            opacity: 0.85;
+        }
+        26% {
+            opacity: 0.3;
+        }
+        40% {
+            opacity: 1;
+        }
+        54% {
+            opacity: 0.35;
+        }
+        68% {
+            opacity: 0.8;
+        }
+        82% {
+            opacity: 0.2;
+        }
+        100% {
+            opacity: 0.1;
+        }
+    }
+
+    @keyframes nf-latir {
+        0%,
+        100% {
+            text-shadow:
+                0 0 1cqw rgba(255, 255, 255, 0.9),
+                0 0 2.6cqw rgba(255, 255, 255, 0.6),
+                0 0.2cqw 0.35cqw rgba(30, 60, 25, 0.25);
+        }
+        50% {
+            text-shadow:
+                0 0 1.4cqw rgba(255, 255, 255, 1),
+                0 0 3.6cqw rgba(255, 255, 255, 0.8),
+                0 0.2cqw 0.35cqw rgba(30, 60, 25, 0.25);
+        }
+    }
+</style>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const seccion = document.getElementById("sobre-novios");
+        const fondo = document.getElementById("nf-fondo");
+        const luces = document.getElementById("nf-luces");
+        const corona = document.getElementById("nf-corona");
+        const titulo = document.getElementById("nf-titulo");
+        const quince = document.getElementById("nf-quince");
+        const mariposas = [
+            document.getElementById("nf-mariposa-izq"),
+            document.getElementById("nf-mariposa-der"),
+        ];
+        const boton = document.getElementById("nf-musica");
+        const audio = document.getElementById("nf-audio") as HTMLAudioElement | null;
+
+        /*
+           ── La música ───────────────────────────────────────────
+           Arranca apagada: ningún navegador deja que el sonido empiece
+           solo, y el que lo permite igual espanta al invitado. La prende
+           el botón.
+
+           El archivo se pide recién al primer toque (preload="none"): son
+           7 MB, y bajarlos en la carga dejaría la invitación lenta para
+           quien no va a poner la música.
+        */
+        if (boton && audio) {
+            boton.addEventListener("click", () => {
+                if (audio.paused) {
+                    audio.play().then(
+                        () => {
+                            boton.classList.add("sonando");
+                            boton.setAttribute("aria-pressed", "true");
+                            boton.setAttribute("aria-label", "Silenciar la música");
+                        },
+                        () => {
+                            // El navegador no la dejó sonar: el botón se
+                            // queda como estaba y el invitado puede reintentar
+                        },
+                    );
+                } else {
+                    audio.pause();
+                    boton.classList.remove("sonando");
+                    boton.setAttribute("aria-pressed", "false");
+                    boton.setAttribute("aria-label", "Poner la música");
+                }
+            });
+
+            // Si la música termina o la corta el sistema, el botón se entera
+            audio.addEventListener("pause", () => {
+                boton.classList.remove("sonando");
+                boton.setAttribute("aria-pressed", "false");
+            });
+        }
+        if (!seccion || !fondo || !titulo) return;
+
+        // Sin animación si el visitante pidió menos movimiento: la
+        // sección ya está armada y visible en el HTML.
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+            return;
+
+        const renglones = Array.from(titulo.children);
+
+        /*
+           Las mariposas ya tienen su vuelo en CSS, que usa transform. Por
+           eso acá solo se les toca la opacidad: si se les tocara la
+           posición, las dos animaciones se pisarían.
+        */
+        // El fondo arranca agrandado y vuelve despacio a su tamaño, igual
+        // que en NombresPadres
+        gsap.set(fondo, { opacity: 0, scale: 1.22 });
+        gsap.set(luces, { opacity: 0, y: "-6%" });
+        gsap.set(corona, { opacity: 0, y: "-18%" });
+        /*
+           La entrada: todos los renglones arrancan al mismo tiempo pero
+           cada uno viene de un lado distinto —el primero baja desde
+           arriba y los demás entran alternando izquierda y derecha—, y
+           además crecen un poquito. Así el armado se nota, que es la
+           gracia, sin que la sección tarde en quedar lista.
+        */
+        /*
+           El número va centrado con translateX(-50%) desde el CSS, y en
+           cuanto GSAP le escribe el transform para moverlo se lo lleva
+           puesto y el 15 queda corrido. Por eso ese -50% se lo pasa acá
+           como xPercent, que GSAP sí respeta en toda la animación.
+        */
+        const centrado = (i: number, el: Element) =>
+            el.classList.contains("numero") ? -50 : 0;
+
+        gsap.set(renglones, {
+            opacity: 0,
+            xPercent: centrado,
+            x: (i) => (i === 0 ? "0%" : i % 2 === 1 ? "-14%" : "14%"),
+            y: (i) => (i === 0 ? "-45%" : "0%"),
+            scale: 0.92,
+        });
+        gsap.set(quince, { opacity: 0, x: "-8%" });
+        gsap.set(mariposas, { opacity: 0 });
+        gsap.set(boton, { opacity: 0, scale: 0.5 });
+
+        /*
+           Arranca pausada. Quién la larga depende de si hay portada:
+
+           · Con portada, la larga el botón de ingreso. Un ScrollTrigger no
+             sirve acá: esta es la primera sección, así que ya está "a la
+             vista" en la carga aunque la portada la tape, y la entrada se
+             consumiría sola mientras el invitado todavía mira la tapa.
+
+           · Sin portada, se comporta como el resto de las secciones y la
+             larga el scroll.
+        */
+        const linea = gsap.timeline({ paused: true });
+
+        linea
+            // 1 · el bosque aparece y se va acomodando
+            .to(fondo, { opacity: 1, duration: 1.1, ease: "power2.out" })
+            .to(fondo, { scale: 1, duration: 3.2, ease: "power2.out" }, 0)
+            // 2 · se encienden las luces de arriba
+            .to(
+                luces,
+                { opacity: 1, y: "0%", duration: 1.4, ease: "power2.out" },
+                0.3,
+            )
+            // 3 · la corona se posa sobre el arco
+            .to(
+                corona,
+                { opacity: 1, y: "0%", duration: 1.1, ease: "back.out(1.6)" },
+                0.7,
+            )
+            // 4 · Mis, 15 y Años, uno tras otro
+            .to(
+                renglones,
+                {
+                    opacity: 1,
+                    xPercent: centrado,
+                    x: "0%",
+                    y: "0%",
+                    scale: 1,
+                    duration: 1.2,
+                    stagger: 0.09,
+                    ease: "power3.out",
+                },
+                1,
+            )
+            // 5 · la quinceañera entra por el costado
+            .to(
+                quince,
+                { opacity: 1, x: "0%", duration: 1.6, ease: "power2.out" },
+                1.1,
+            )
+            // 6 · y al final aparecen las mariposas
+            .to(
+                mariposas,
+                { opacity: 1, duration: 1.2, stagger: 0.3, ease: "power1.out" },
+                1.8,
+            )
+            // 7 · el botón de la música, con un rebote, para que se note
+            .to(
+                boton,
+                {
+                    opacity: 1,
+                    scale: 1,
+                    duration: 1,
+                    ease: "back.out(2)",
+                    clearProps: "transform",
+                },
+                2,
+            );
+
+        // ═══ QUIÉN LARGA LA ENTRADA ═══
+        function arrancar() {
+            /*
+               La portada tenía el scroll bloqueado y ocupaba la pantalla,
+               así que las medidas que ScrollTrigger calculó en la carga ya
+               no valen. El refresh las rehace antes de reproducir.
+            */
+            ScrollTrigger.refresh();
+            linea.restart();
+        }
+
+        const portada = document.getElementById("portada-section");
+
+        if ((window as any).portadaAbierta) {
+            // Su script corrió antes que este y ya avisó
+            arrancar();
+        } else if (portada) {
+            window.addEventListener("portada-abierta", arrancar, {
+                once: true,
+            });
+        } else {
+            // Sin portada: entra con el scroll, como las demás secciones
+            ScrollTrigger.create({
+                trigger: seccion,
+                start: "top 78%",
+                onEnter: () => linea.restart(),
+                onLeaveBack: () => linea.pause(0),
+            });
+        }
+    });
+</script>
