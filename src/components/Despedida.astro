@@ -14,7 +14,7 @@ import { datosDelPase } from "../scripts/pase";
 
 /*
    Cuántas personas entran con esta invitación. Lo manda la página:
-   /pase3 da 3. El index no manda nada y queda en el pase general (2).
+   /pase3 da 3. El index no manda nada y la tarjeta del pase no se dibuja.
 */
 export interface Props {
     pases?: number;
@@ -122,22 +122,26 @@ const enlace = `https://wa.me/${whatsapp}?text=${encodeURIComponent(mensaje)}`;
         </p>
 
         <!-- El pase: tarjeta esmeralda con filete dorado y el número en
-             un sello dorado -->
-        <div class="pase" role="group" aria-label={`Pase válido para ${pase.texto}`}>
-            <p class="pase-encabezado font-charm">
-                <span class="pase-estrella" aria-hidden="true">✦</span>
-                {encabezadoPase}
-                <span class="pase-estrella" aria-hidden="true">✦</span>
-            </p>
+             un sello dorado. Solo en /pase1, /pase2...; el index va sin pase -->
+        {
+            pase && (
+                <div class="pase" role="group" aria-label={`Pase válido para ${pase.texto}`}>
+                    <p class="pase-encabezado font-charm">
+                        <span class="pase-estrella" aria-hidden="true">✦</span>
+                        {encabezadoPase}
+                        <span class="pase-estrella" aria-hidden="true">✦</span>
+                    </p>
 
-            <p class="pase-rotulo font-charm">{rotuloPase}</p>
+                    <p class="pase-rotulo font-charm">{rotuloPase}</p>
 
-            <div class="pase-sello">
-                <span class="pase-numero font-charm">{pase.numero}</span>
-            </div>
+                    <div class="pase-sello">
+                        <span class="pase-numero font-charm">{pase.numero}</span>
+                    </div>
 
-            <p class="pase-unidad font-charm">{pase.unidad}</p>
-        </div>
+                    <p class="pase-unidad font-charm">{pase.unidad}</p>
+                </div>
+            )
+        }
 
         <a
             class="boton font-charm"
