@@ -10,15 +10,35 @@
 // breakpoints: se ve igual en el celular, en la tablet y en la
 // computadora, como el resto de la invitación.
 
+import { datosDelPase } from "../scripts/pase";
+
+/*
+   Cuántas personas entran con esta invitación. Lo manda la página:
+   /pase3 da 3. El index no manda nada y queda en el pase general (2).
+*/
+export interface Props {
+    pases?: number;
+}
+const { pases = 0 } = Astro.props;
+const pase = datosDelPase(pases);
+
 // ── DATOS EDITABLES ───────────────────────────────────────────
 const titulo = "¡Te espero!";
 const parrafos = [
     "Gracias por ser parte de este sueño que empieza entre luces y árboles.",
     "Tu presencia es el mejor regalo para esta noche que no voy a olvidar.",
 ];
-// El plazo para confirmar: la fecha va resaltada en un recuadro
-const textoPlazo = "Confirma tu asistencia hasta el";
-const fechaPlazo = "4 de noviembre";
+
+// La confirmación, con el texto que mandó la clienta. La fecha va
+// resaltada dentro del recuadro.
+const tituloConfirmar = "Confirmación de asistencia";
+const textoPlazo = "Agradecemos confirmar su asistencia hasta el";
+const fechaPlazo = "1 de noviembre";
+const textoPlazoFin = "para poder organizar y reservar los lugares correspondientes.";
+
+// La tarjeta del pase
+const encabezadoPase = "Pase personal";
+const rotuloPase = "Válido para";
 
 const textoBoton = "Confirmar asistencia";
 
@@ -95,9 +115,29 @@ const enlace = `https://wa.me/${whatsapp}?text=${encodeURIComponent(mensaje)}`;
 
         {parrafos.map((p) => <p class="parrafo font-charm">{p}</p>)}
 
+        <p class="subtitulo font-charm">{tituloConfirmar}</p>
+
         <p class="parrafo plazo font-charm">
-            {textoPlazo} <span class="fecha-plazo">{fechaPlazo}</span>
+            {textoPlazo} <span class="fecha-plazo">{fechaPlazo}</span>, {textoPlazoFin}
         </p>
+
+        <!-- El pase: tarjeta esmeralda con filete dorado y el número en
+             un sello dorado -->
+        <div class="pase" role="group" aria-label={`Pase válido para ${pase.texto}`}>
+            <p class="pase-encabezado font-charm">
+                <span class="pase-estrella" aria-hidden="true">✦</span>
+                {encabezadoPase}
+                <span class="pase-estrella" aria-hidden="true">✦</span>
+            </p>
+
+            <p class="pase-rotulo font-charm">{rotuloPase}</p>
+
+            <div class="pase-sello">
+                <span class="pase-numero font-charm">{pase.numero}</span>
+            </div>
+
+            <p class="pase-unidad font-charm">{pase.unidad}</p>
+        </div>
 
         <a
             class="boton font-charm"
@@ -167,11 +207,19 @@ const enlace = `https://wa.me/${whatsapp}?text=${encodeURIComponent(mensaje)}`;
        dorado de la invitación. El velo va como degradado y no como
        color, por el modo oscuro.
     */
+    .subtitulo {
+        margin-top: 7cqw;
+        color: #c0993f;
+        font-size: 7cqw;
+        font-weight: 700;
+        line-height: 1.15;
+    }
+
     .plazo {
         width: fit-content;
         max-width: 100%;
-        margin-inline: auto;
-        padding: 1.6cqw 4cqw;
+        margin: 3cqw auto 0;
+        padding: 2.4cqw 4.5cqw;
         border: 1px solid #c0993f;
         border-radius: 2cqw;
         background-image: linear-gradient(
@@ -189,6 +237,91 @@ const enlace = `https://wa.me/${whatsapp}?text=${encodeURIComponent(mensaje)}`;
 
     .parrafo + .parrafo {
         margin-top: 2.4cqw;
+    }
+
+    /* ── La tarjeta del pase ────────────────────────────────
+       Fondo esmeralda como el vestido, un filete dorado adentro y el
+       número grande en un sello dorado. Compacta: el texto va pegado y
+       el sello no ocupa más de lo necesario. Los fondos van como
+       degradado, por el modo oscuro. */
+    .pase {
+        position: relative;
+        width: 78%;
+        margin: 5cqw auto 0;
+        padding: 3.6cqw 5cqw 4cqw;
+        border-radius: 3.6cqw;
+        background-image:
+            radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.14), transparent 60%),
+            linear-gradient(160deg, #1f6b5c, #0e3a33);
+        box-shadow: 0 0.8cqw 2cqw rgba(14, 58, 51, 0.35);
+    }
+
+    /* El filete dorado de adentro */
+    .pase::before {
+        content: "";
+        position: absolute;
+        inset: 1.3cqw;
+        border: 1px solid rgba(214, 178, 96, 0.7);
+        border-radius: 2.6cqw;
+        pointer-events: none;
+    }
+
+    .pase-encabezado {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2cqw;
+        color: #e2c06f;
+        font-size: 4.4cqw;
+        font-weight: 700;
+        font-variant-caps: small-caps;
+        letter-spacing: 0.08em;
+        line-height: 1;
+    }
+
+    .pase-estrella {
+        font-size: 2.8cqw;
+        color: #d6b260;
+    }
+
+    .pase-rotulo {
+        margin-top: 2cqw;
+        color: #f3e2b4;
+        font-size: 4.8cqw;
+        line-height: 1.2;
+    }
+
+    /* El sello: un círculo dorado con brillo arriba y doble aro */
+    .pase-sello {
+        display: grid;
+        place-items: center;
+        width: 15cqw;
+        height: 15cqw;
+        margin: 2cqw auto 0;
+        border-radius: 50%;
+        background-image:
+            radial-gradient(circle at 35% 28%, #f7e3a6, transparent 55%),
+            linear-gradient(145deg, #e2c06f, #b48a34);
+        box-shadow:
+            0 0 0 0.9cqw rgba(214, 178, 96, 0.18),
+            0 0 0 1.1cqw rgba(214, 178, 96, 0.55),
+            0 0.6cqw 1.4cqw rgba(0, 0, 0, 0.3);
+    }
+
+    .pase-numero {
+        color: #0e3a33;
+        font-size: 9cqw;
+        font-weight: 700;
+        line-height: 1;
+        transform: translateY(0.3cqw);
+    }
+
+    .pase-unidad {
+        margin-top: 2.4cqw;
+        color: #e2c06f;
+        font-size: 6.4cqw;
+        font-weight: 700;
+        line-height: 1;
     }
 
     /* ── El botón ───────────────────────────────────────────
